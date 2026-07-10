@@ -1,0 +1,13 @@
+{
+  "name": "东方枢纽劳务助手",
+  "short_name": "东方劳务",
+  "description": "劳务人员、工资历史与证书一键查询",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#e9eeeb",
+  "theme_color": "#1f2925",
+  "icons": [
+    {"src":"app-icon.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}
