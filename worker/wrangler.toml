@@ -1,0 +1,18 @@
+name = "dongfang-labor-admin"
+main = "src/worker.js"
+compatibility_date = "2026-07-01"
+
+# 部署前填入实际 database_id：
+# wrangler d1 create dongfang_labor_admin
+[[d1_databases]]
+binding = "DB"
+database_name = "dongfang_labor_admin"
+database_id = "841105aa-68df-4602-a074-bb30da89b9a4"
+
+# 部署前创建：wrangler r2 bucket create dongfang-labor-certs
+[[r2_buckets]]
+binding = "CERT_BUCKET"
+bucket_name = "dongfang-labor-certs"
+
+[vars]
+# ADMIN_TOKEN 用 wrangler secret put ADMIN_TOKEN 设置，不写在文件里。

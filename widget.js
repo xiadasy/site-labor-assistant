@@ -2,7 +2,7 @@
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-blue; icon-glyph: hard-hat;
 /** 东方枢纽劳务挂件 V2.0 - 稳定版 */
-const DATA_URL = 'https://xiadasy.github.io/site-labor-assistant/widget-summary.json';
+const DATA_URL = 'https://dongfang-labor-admin.a15221082942.workers.dev/api/summary';
 const SITE_URL = 'https://xiadasy.github.io/site-labor-assistant/';
 const FALLBACK = {version:1,project:'东方枢纽工程',updatedAt:'2026-07-10 23:15',rosterVersion:'2026-07-08',records:49,active:37,focusOver55:3,certificateCount:48,certifiedPeople:29,units:[{id:'gongqiang',name:'共强',records:23,active:18,certificateCount:20,payrollHistory:[{month:'2026-06',expectedTotal:246830,paidTotal:0,peopleCount:19,status:'待发放'},{month:'2026-05',expectedTotal:131960,paidTotal:122060,peopleCount:16,status:'部分成功'},{month:'2026-04',expectedTotal:32700,paidTotal:32700,peopleCount:5,status:'已发放'}]},{id:'mingfu',name:'铭富',records:26,active:19,certificateCount:28,payrollHistory:[{month:'2026-06',expectedTotal:241330,paidTotal:0,peopleCount:19,status:'待发放'},{month:'2026-05',expectedTotal:153570,paidTotal:153570,peopleCount:19,status:'已发放'},{month:'2026-04',expectedTotal:90240,paidTotal:90240,peopleCount:13,status:'已发放'},{month:'2026-03',expectedTotal:32580,paidTotal:32580,peopleCount:7,status:'已发放'}]}]};
 function money(n){return '¥'+Number(n||0).toLocaleString('zh-CN')}
