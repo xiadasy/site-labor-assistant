@@ -59,6 +59,40 @@ async function fallback(path) {
   return fetch(FALLBACK_BASE + path.replace(/^\//, ''), { cf: { cacheTtl: 0, cacheEverything: false } });
 }
 
+function bytesToBase64(buffer) {
+  const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+  let out = '';
+  for (let i = 0; i < bytes.length; i += 8192) out += String.fromCharCode(...bytes.slice(i, i + 8192));
+  return btoa(out);
+}
+
+function base64ToBytes(value) {
+  const raw = atob(value);
+  const bytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  return bytes;
+}
+
+async function readCertFromD1(env, key) {
+  const meta = await env.DB.prepare('SELECT content_type,size FROM cert_files WHERE key = ?').bind(key).first();
+  if (!meta) return null;
+  const rows = await env.DB.prepare('SELECT body_base64 FROM cert_file_chunks WHERE key = ? ORDER BY idx ASC').bind(key).all();
+  const body = (rows.results || []).map(x => x.body_base64).join('');
+  if (!body) return null;
+  return { bytes: base64ToBytes(body), contentType: meta.content_type || 'application/octet-stream', size: meta.size };
+}
+
+async function writeCertToD1(env, key, bytes, contentType) {
+  const body = bytesToBase64(bytes);
+  const chunkSize = 60000;
+  await env.DB.prepare('DELETE FROM cert_file_chunks WHERE key = ?').bind(key).run();
+  await env.DB.prepare('INSERT INTO cert_files(key,content_type,size,created_at) VALUES(?,?,?,datetime(\'now\')) ON CONFLICT(key) DO UPDATE SET content_type=excluded.content_type,size=excluded.size,created_at=datetime(\'now\')')
+    .bind(key, contentType || 'application/octet-stream', bytes.byteLength || bytes.length).run();
+  for (let i = 0, idx = 0; i < body.length; i += chunkSize, idx++) {
+    await env.DB.prepare('INSERT INTO cert_file_chunks(key,idx,body_base64) VALUES(?,?,?)').bind(key, idx, body.slice(i, i + chunkSize)).run();
+  }
+}
+
 function requireAdmin(request, env) {
   const configured = env.ADMIN_TOKEN && env.ADMIN_TOKEN.length >= 24;
   if (!configured) return { ok: false, status: 500, message: 'ADMIN_TOKEN not configured' };
@@ -113,18 +147,21 @@ async function handleCert(request, env, path) {
       const obj = await env.CERT_BUCKET.get(key);
       if (obj) return new Response(obj.body, { headers: { ...corsHeaders(request), 'Content-Type': 'application/octet-stream', 'Cache-Control': 'private, max-age=60' } });
     }
+    const stored = await readCertFromD1(env, key);
+    if (stored) return new Response(stored.bytes, { headers: { ...corsHeaders(request), 'Content-Type': stored.contentType, 'Cache-Control': 'private, max-age=60' } });
     const r = await fallback(key);
     return new Response(r.body, { status: r.status, headers: { ...corsHeaders(request), 'Content-Type': 'application/octet-stream', 'Cache-Control': 'private, max-age=60' } });
   }
   if (request.method === 'PUT') {
     const auth = requireAdmin(request, env);
     if (!auth.ok) return jsonResponse(request, { ok: false, error: auth.message }, auth.status);
-    if (!env.CERT_BUCKET) return jsonResponse(request, { ok: false, error: 'CERT_BUCKET not configured' }, 500);
     const bytes = await request.arrayBuffer();
     if (bytes.byteLength < 64) return jsonResponse(request, { ok: false, error: 'file too small' }, 400);
-    await env.CERT_BUCKET.put(key, bytes, { httpMetadata: { contentType: 'application/octet-stream' } });
+    if (bytes.byteLength > 3 * 1024 * 1024 && !env.CERT_BUCKET) return jsonResponse(request, { ok: false, error: 'file too large for D1 fallback; enable R2' }, 400);
+    if (env.CERT_BUCKET) await env.CERT_BUCKET.put(key, bytes, { httpMetadata: { contentType: 'application/octet-stream' } });
+    else await writeCertToD1(env, key, bytes, 'application/octet-stream');
     await audit(env, 'upload-cert', key, request);
-    return jsonResponse(request, { ok: true, path: key, size: bytes.byteLength });
+    return jsonResponse(request, { ok: true, path: key, size: bytes.byteLength, storage: env.CERT_BUCKET ? 'r2' : 'd1' });
   }
   return jsonResponse(request, { ok: false, error: 'method not allowed' }, 405);
 }
