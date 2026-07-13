@@ -1,5 +1,5 @@
-const CACHE='dongfang-labor-v8';
-const ASSETS=['./','./index.html','./admin.html','./company.html','./manifest.webmanifest','./app-icon.png'];
+const CACHE='dongfang-labor-v9';
+const ASSETS=['./','./index.html','./admin.html','./company.html','./company-admin.html','./manifest.webmanifest','./app-icon.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))));
 self.addEventListener('fetch',event=>{

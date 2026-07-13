@@ -131,6 +131,25 @@ async function handleState(request, env) {
   return jsonResponse(request, { ok: false, error: 'method not allowed' }, 405);
 }
 
+async function handleCompanyState(request, env) {
+  if (request.method === 'GET') {
+    const stored = await readState(env, 'company-encrypted-data');
+    if (stored) return textResponse(request, stored, 200, 'application/json; charset=utf-8');
+    const r = await fallback('company-encrypted-data.json');
+    return new Response(r.body, { status: r.status, headers: { ...corsHeaders(request), 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });
+  }
+  if (request.method === 'POST') {
+    const auth = requireAdmin(request, env);
+    if (!auth.ok) return jsonResponse(request, { ok: false, error: auth.message }, auth.status);
+    const body = await request.json();
+    if (!validEnvelope(body.encryptedData)) return jsonResponse(request, { ok: false, error: 'invalid encryptedData' }, 400);
+    await writeState(env, 'company-encrypted-data', JSON.stringify(body.encryptedData));
+    await audit(env, 'save-company-state', JSON.stringify(body.auditSummary || {}).slice(0, 1000), request);
+    return jsonResponse(request, { ok: true, savedAt: new Date().toISOString() });
+  }
+  return jsonResponse(request, { ok: false, error: 'method not allowed' }, 405);
+}
+
 async function handleSummary(request, env) {
   const stored = await readState(env, 'widget-summary');
   if (stored) return textResponse(request, stored, 200, 'application/json; charset=utf-8');
@@ -180,6 +199,7 @@ export default {
     const path = url.pathname;
     try {
       if (path === '/api/state' || path === '/encrypted-data.json') return handleState(request, env);
+      if (path === '/api/company-state' || path === '/company-encrypted-data.json') return handleCompanyState(request, env);
       if (path === '/api/summary' || path === '/widget-summary.json') return handleSummary(request, env);
       if (path.startsWith('/api/cert/') || path.startsWith('/cert-files/')) return handleCert(request, env, path);
       if (path === '/api/audit') return handleAudit(request, env);
