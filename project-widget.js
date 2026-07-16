@@ -2,8 +2,8 @@
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-blue; icon-glyph: magnifying-glass;
 /** 东方枢纽人员快搜挂件 V2.0 - 轻量高速版 */
-const SITE_URL = 'https://xiadasy.github.io/site-labor-assistant/search.html';
-const DATA_URL = 'https://xiadasy.github.io/site-labor-assistant/project-widget-summary.json';
+const SITE_URL = 'https://xiadasy.github.io/site-labor-assistant/search.html?v=33';
+const DATA_URL = 'https://xiadasy.github.io/site-labor-assistant/project-widget-summary.json?v=33';
 const FALLBACK = {
   records: 2619,
   active: 1266,
