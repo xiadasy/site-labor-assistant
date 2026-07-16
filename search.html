@@ -1,47 +1,297 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#17342f"><title>人员快速搜索</title><style>*{box-sizing:border-box}body{margin:0;background:linear-gradient(130deg,#17342f,#235248);color:#fff;font-family:"PingFang SC",-apple-system,BlinkMacSystemFont,sans-serif;font-variant-numeric:tabular-nums}.search-box{position:sticky;top:0;z-index:10;padding:calc(12px + env(safe-area-inset-top)) 14px 12px;background:linear-gradient(130deg,#17342f,#214940);box-shadow:0 4px 18px #17342f40}input{width:100%;height:44px;border:1px solid #ffffff30;border-radius:10px;padding:0 14px;background:#ffffff13;color:#fff;font:16px inherit}input::placeholder{color:#a0b5ac}input:focus{outline:none;border-color:#26766355}.stats{display:flex;gap:10px;padding:10px 14px 6px;overflow-x:auto;scrollbar-width:none}.stats::-webkit-scrollbar{display:none}.stat{flex:0 0 auto;background:#ffffff13;border:1px solid #ffffff20;border-radius:9px;padding:8px 12px;text-align:center}.stat b{display:block;font-size:17px}.stat span{font-size:9px;color:#a0b5ac}.hint{text-align:center;color:#a0b5ac;font-size:12px;padding:8px 14px}.results{padding:0 10px calc(20px + env(safe-area-inset-bottom)) 10px}.card{background:rgba(255,254,250,.96);border:1px solid #fff;border-radius:13px;margin-bottom:9px;overflow:hidden;box-shadow:0 6px 16px #00000020;color:#152722}.card-head{padding:12px 14px 8px;display:flex;align-items:center;gap:9px;cursor:pointer}.card-head .avatar{width:38px;height:38px;border-radius:10px;background:#e8efe9;display:grid;place-items:center;color:#267663;font-size:16px;font-weight:800;flex:0 0 auto}.card-head .info{flex:1;min-width:0}.card-head .info b{font-size:15px;color:#152722}.card-head .info small{display:block;color:#74807a;font-size:11px;margin-top:2px}.card-head .badge{flex:0 0 auto;font-size:10px;padding:3px 7px;border-radius:5px;font-weight:700}.badge.on{background:#e8f3ed;color:#267663}.badge.off{background:#f9e9e6;color:#b84f42}.card-head .arrow{flex:0 0 auto;color:#74807a;font-size:14px;transition:.2s}.card.open .arrow{transform:rotate(180deg)}.card-body{display:none;padding:0 14px 14px}.card.open .card-body{display:block}.section{font-size:10px;font-weight:700;color:#74807a;letter-spacing:.05em;margin:14px 0 6px}.facts{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e0e6de;border-radius:9px;overflow:hidden;background:#fff}.fact{padding:8px 10px;border-bottom:1px solid #edf0eb;font-size:11px}.fact:nth-child(odd){border-right:1px solid #edf0eb}.fact label{display:block;color:#74807a;font-size:9px;margin-bottom:2px}.fact span{word-break:break-all}.records{border:1px solid #e0e6de;border-radius:9px;overflow:hidden}.record{padding:8px 10px;border-top:1px solid #edf0eb;font-size:11px}.record:first-child{border:0}.record b{display:block;margin-bottom:3px}.record span{color:#74807a}.loading{text-align:center;padding:60px 20px;color:#a0b5ac}.spinner{display:inline-block;width:28px;height:28px;border:3px solid #ffffff30;border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:12px}@keyframes spin{to{transform:rotate(360deg)}}.empty{text-align:center;padding:40px 20px;color:#a0b5ac}.tag{display:inline-block;padding:2px 5px;border-radius:4px;background:#edf5f0;color:#267663;font-size:9px;margin:1px}</style></head><body>
-<div class="search-box"><input id="q" placeholder="输入姓名、身份证、手机、单位、班组、工种…" autofocus></div>
-<div class="stats" id="stats"></div>
-<div class="hint" id="hint">正在加载2619人数据…</div>
-<div class="results" id="results"></div>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17342f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>人员快搜 · 东方枢纽</title>
+<style>
+:root{
+  --ink:#152722;--deep:#17342f;--green:#267663;--orange:#c96d29;--red:#b84f42;
+  --muted:#74807a;--line:#e3e8e2;--paper:#fffefa;--soft:#f3f6f2;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--soft);color:var(--ink);font-family:"PingFang SC",-apple-system,BlinkMacSystemFont,sans-serif;font-variant-numeric:tabular-nums}
+body{min-height:100dvh}
+.top{
+  position:sticky;top:0;z-index:20;
+  padding:calc(12px + env(safe-area-inset-top)) 14px 12px;
+  background:linear-gradient(135deg,#17342f 0%,#235248 55%,#2a5f54 100%);
+  color:#fff;box-shadow:0 8px 24px #17342f33;
+}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.logo{
+  width:34px;height:34px;border-radius:10px;background:#ffffff18;
+  display:grid;place-items:center;font-weight:800;border:1px solid #ffffff28;
+}
+.brand h1{margin:0;font-size:17px;letter-spacing:-.03em}
+.brand p{margin:2px 0 0;font-size:11px;color:#c4d7d0}
+.search-wrap{position:relative}
+.search-wrap input{
+  width:100%;height:46px;border:0;border-radius:12px;padding:0 44px 0 42px;
+  background:#fff;color:var(--ink);font:16px/1.2 inherit;box-shadow:0 8px 20px #0e292222;
+}
+.search-wrap input::placeholder{color:#8a948e}
+.search-wrap .icon{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  width:18px;height:18px;opacity:.55;
+}
+.search-wrap .clear{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  width:28px;height:28px;border:0;border-radius:8px;background:#edf2ee;color:var(--muted);
+  display:none;place-items:center;font-size:16px;
+}
+.search-wrap.has-text .clear{display:grid}
+.stats{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;
+  padding:12px 14px 0;
+}
+.stat{
+  background:var(--paper);border:1px solid #fff;border-radius:12px;
+  padding:10px 6px;text-align:center;box-shadow:0 6px 16px #17342f0d;
+}
+.stat b{display:block;font-size:16px;letter-spacing:-.03em}
+.stat span{display:block;margin-top:3px;font-size:10px;color:var(--muted)}
+.stat.emph b{color:var(--orange)}
+.toolbar{
+  display:flex;gap:8px;overflow:auto;padding:12px 14px 8px;
+  scrollbar-width:none;
+}
+.toolbar::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;height:32px;border:1px solid var(--line);border-radius:999px;
+  background:#fff;color:var(--muted);padding:0 12px;font-size:12px;
+}
+.chip.on{background:var(--deep);border-color:var(--deep);color:#fff;font-weight:700}
+.hint{padding:0 16px 8px;font-size:12px;color:var(--muted)}
+.list{padding:0 12px calc(24px + env(safe-area-inset-bottom))}
+.card{
+  background:var(--paper);border:1px solid #fff;border-radius:16px;margin-bottom:10px;
+  box-shadow:0 8px 20px #17342f0d;overflow:hidden;
+}
+.card-head{
+  display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;
+  padding:12px 14px;cursor:pointer;
+}
+.avatar{
+  width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#e8f3ed,#dcece3);
+  color:var(--green);display:grid;place-items:center;font-weight:800;font-size:16px;
+}
+.meta b{display:block;font-size:15px;letter-spacing:-.02em}
+.meta small{display:block;margin-top:3px;color:var(--muted);font-size:11px;line-height:1.4}
+.side{text-align:right}
+.badge{
+  display:inline-block;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:700;
+}
+.badge.on{background:#e8f3ed;color:var(--green)}
+.badge.off{background:#f9e9e6;color:var(--red)}
+.side .arrow{display:block;margin-top:6px;color:var(--muted);font-size:12px;transition:.15s}
+.card.open .arrow{transform:rotate(180deg)}
+.body{display:none;padding:0 14px 14px;border-top:1px solid #eef2ee}
+.card.open .body{display:block}
+.section{margin-top:14px;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.04em}
+.facts{
+  margin-top:8px;display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);
+  border-radius:12px;overflow:hidden;background:#fff;
+}
+.fact{padding:10px;border-top:1px solid #edf0eb;font-size:12px}
+.fact:nth-child(-n+2){border-top:0}
+.fact:nth-child(odd){border-right:1px solid #edf0eb}
+.fact label{display:block;color:var(--muted);font-size:10px;margin-bottom:3px}
+.fact span{word-break:break-all}
+.records{margin-top:8px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.record{padding:10px;border-top:1px solid #edf0eb;font-size:12px}
+.record:first-child{border-top:0}
+.record b{display:block;margin-bottom:3px}
+.record span{color:var(--muted)}
+.empty,.loading{
+  text-align:center;color:var(--muted);padding:48px 20px;font-size:13px;
+}
+.spinner{
+  width:28px;height:28px;border:3px solid #d7e3dc;border-top-color:var(--green);
+  border-radius:50%;margin:0 auto 12px;animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.foot{
+  text-align:center;color:#9aa49e;font-size:11px;padding:4px 14px 18px;
+}
+@media(max-width:420px){
+  .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .stat:nth-child(4),.stat:nth-child(5){display:none}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <div class="logo">搜</div>
+    <div>
+      <h1>东方枢纽 · 人员快搜</h1>
+      <p id="updated">加载中…</p>
+    </div>
+  </div>
+  <div class="search-wrap" id="searchWrap">
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#74807a" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" type="search" enterkeyhint="search" placeholder="姓名 / 身份证 / 手机 / 单位 / 班组 / 工种" autofocus>
+    <button class="clear" id="clear" aria-label="清空">×</button>
+  </div>
+</header>
+
+<section class="stats" id="stats"></section>
+<div class="toolbar" id="toolbar">
+  <button class="chip on" data-f="all">全部</button>
+  <button class="chip" data-f="active">已进场</button>
+  <button class="chip" data-f="exit">已退场</button>
+  <button class="chip" data-f="managed">我管班组</button>
+  <button class="chip" data-f="cert">有证书</button>
+</div>
+<div class="hint" id="hint">正在加载轻量索引…</div>
+<main class="list" id="list"></main>
+<div class="foot">轻量索引秒开 · 详情按需加载 · 点挂件即可直达</div>
+
 <script>
-const $=s=>document.querySelector(s);let people=[],loaded=false;
-function mask(x,a=4,b=4){return !x?'未录入':String(x).slice(0,a)+'****'+String(x).slice(-b)}
-function maskPhone(x){return !x?'未录入':String(x).slice(0,3)+'****'+String(x).slice(-4)}
-async function init(){
- const r=await fetch('project-encrypted-data.json?'+Date.now());
- const x=await r.json();
- const raw=decodeURIComponent(escape(atob(x.payload)));
- const data=JSON.parse(raw);
- people=data.people;
- loaded=true;
- $('#hint').textContent='共 '+people.length.toLocaleString()+' 人 · 输入姓名或关键词搜索';
- // stats
- const managed=['黄卫华_2414班组','上海东站九分弱电班组','(有登高车操作证)上海东站九分弱电班组','(有登高车操作证)上海东站九分弱电黄卫华班组'];
- const active=people.filter(p=>p.status==='已进场').length;
- const managedCount=people.filter(p=>managed.includes(p.team)).length;
- const managedActive=people.filter(p=>managed.includes(p.team)&&p.status==='已进场').length;
- const withCert=people.filter(p=>p.certificates&&p.certificates.length).length;
- $('#stats').innerHTML=[
-  {b:people.length,s:'总人数'},{b:active,s:'已进场'},{b:managedCount,s:'我管班组'},{b:managedActive,s:'我管在场'},{b:withCert,s:'有证书'}
- ].map(x=>`<div class="stat"><b>${x.b.toLocaleString()}</b><span>${x.s}</span></div>`).join('');
- render();
+const $=s=>document.querySelector(s);
+const MANAGED=['黄卫华_2414班组','上海东站九分弱电班组','(有登高车操作证)上海东站九分弱电班组','(有登高车操作证)上海东站九分弱电黄卫华班组'];
+let lite=[], detailMap=null, filter='all', timer=null, detailLoading=null;
+
+function esc(s){return String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;')}
+function val(s){return s||'未录入'}
+function avatar(name){return esc((name||'?').slice(0,1))}
+
+function match(p,q){
+  if(!q) return true;
+  return [p.n,p.idc,p.ph,p.u,p.t,p.w].join(' ').toLowerCase().includes(q);
 }
+function passFilter(p){
+  if(filter==='active') return p.s==='已进场';
+  if(filter==='exit') return p.s==='已退场';
+  if(filter==='managed') return MANAGED.includes(p.t);
+  if(filter==='cert') return !!(detailMap? (detailMap.get(p.id)?.q?.length) : p.hasQ);
+  return true;
+}
+
+function renderStats(summary){
+  const items=[
+    [summary.records,'总人数',false],
+    [summary.active,'已进场',false],
+    [summary.managed,'我管班组',true],
+    [summary.managedActive,'我管在场',true],
+    [summary.withCert,'有证书',false]
+  ];
+  $('#stats').innerHTML=items.map(([b,s,e])=>`<div class="stat${e?' emph':''}"><b>${Number(b).toLocaleString()}</b><span>${s}</span></div>`).join('');
+}
+
+function cardHtml(p){
+  return `<article class="card" data-id="${esc(p.id)}">
+    <div class="card-head">
+      <div class="avatar">${avatar(p.n)}</div>
+      <div class="meta">
+        <b>${esc(p.n||'未录入')}</b>
+        <small>${esc(p.u||'未录入单位')} · ${esc(p.w||'未录入工种')}<br>${esc(p.t||'未录入班组')}</small>
+      </div>
+      <div class="side">
+        <span class="badge ${p.s==='已进场'?'on':'off'}">${esc(p.s||'未知')}</span>
+        <span class="arrow">▾</span>
+      </div>
+    </div>
+    <div class="body" id="body-${esc(p.id)}"><div class="loading"><div class="spinner"></div>加载详情…</div></div>
+  </article>`;
+}
+
+function detailHtml(p){
+  const contracts=p.c?.length?p.c.map(x=>`<div class="record"><b>${esc(x.type||'合同')}</b><span>${esc(x.start||'?')} 至 ${esc(x.end||'?')}</span></div>`).join(''):`<div class="record"><b>无合同记录</b></div>`;
+  const certs=p.q?.length?p.q.map(x=>`<div class="record"><b>${esc(x.name||'证书')}</b><span>编号 ${esc(x.code||'未录入')}<br>有效期 ${esc(x.start||'?')} 至 ${esc(x.end||'?')}</span></div>`).join(''):`<div class="record"><b>无证书记录</b></div>`;
+  const services=p.svc?.length?p.svc.map(x=>`<div class="record"><b>${esc(x.corp||'项目服务')}</b><span>${esc(x.team||'')} · ${esc(x.trade||'')}<br>进场 ${esc(x.entry||'?')} · 退场 ${esc(x.exit||'当前在场')}</span></div>`).join(''):`<div class="record"><b>无服务记录</b></div>`;
+  const daily=p.da?.length?p.da.slice().reverse().map(x=>`<div class="record"><b>${esc(x.time||'?')}</b><span>工时 ${esc(x.h||0)}H · 进 ${esc(x.in||'—')} · 离 ${esc(x.out||'—')}</span></div>`).join(''):`<div class="record"><b>无近期考勤</b></div>`;
+  const monthly=p.ma?.length?p.ma.map(x=>`<div class="record"><b>${esc(x.m||'?')}</b><span>月度工时 ${esc(x.h||0)}H</span></div>`).join(''):`<div class="record"><b>无月度考勤</b></div>`;
+  return `
+    <div class="section">基本信息</div>
+    <div class="facts">
+      <div class="fact"><label>身份证</label><span>${esc(val(p.idc))}</span></div>
+      <div class="fact"><label>手机号</label><span>${esc(val(p.ph))}</span></div>
+      <div class="fact"><label>性别 / 年龄</label><span>${esc(val(p.x))} / ${esc(p.a||'—')} 岁</span></div>
+      <div class="fact"><label>民族</label><span>${esc(val(p.nation))}</span></div>
+      <div class="fact"><label>出生日期</label><span>${esc(val(p.bd))}</span></div>
+      <div class="fact"><label>进场时间</label><span>${esc(val(p.e))}</span></div>
+      <div class="fact"><label>住址</label><span>${esc(val(p.addr))}</span></div>
+      <div class="fact"><label>门禁卡号</label><span>${esc(val(p.ac))}</span></div>
+      <div class="fact"><label>开户银行</label><span>${esc(val(p.b))}</span></div>
+      <div class="fact"><label>银行卡号</label><span>${esc(val(p.bc))}</span></div>
+    </div>
+    <div class="section">劳动合同</div><div class="records">${contracts}</div>
+    <div class="section">资格证书</div><div class="records">${certs}</div>
+    <div class="section">项目服务</div><div class="records">${services}</div>
+    <div class="section">近期考勤</div><div class="records">${daily}</div>
+    <div class="section">月度考勤</div><div class="records">${monthly}</div>`;
+}
+
 function render(){
- if(!loaded){return}
- const q=$('#q').value.trim().toLowerCase();
- const shown=!q?people.slice(0,30):people.filter(p=>[p.name,p.idCard,p.phone,p.unit,p.team,p.trade].join(' ').toLowerCase().includes(q));
- $('#hint').textContent=q?('找到 '+shown.length.toLocaleString()+' 人'+(shown.length>50?' · 只显示前50':'')):('共 '+people.length.toLocaleString()+' 人 · 输入关键词搜索');
- const list=shown.slice(0,50);
- $('#results').innerHTML=list.map(p=>{
-  const certs=(p.certificates||[]).map(c=>`<span class="tag">${c.name||c.className||''}</span>`).join('')||'';
-  const contracts=(p.contracts||[]).map(c=>`<div class="record"><b>${c.type||'合同'}</b><span>${c.startDate||'?'} 至 ${c.endDate||'?'}</span></div>`).join('')||'<div class="record"><b>无合同记录</b></div>';
-  const services=(p.services||[]).map(s=>`<div class="record"><b>${s.corpName||''}</b><span>${s.teamName||''} · ${s.trade||''}<br>进场 ${s.entryDate||'?'} · 退场 ${s.exitDate||'当前在场'}</span></div>`).join('')||'<div class="record"><b>无服务记录</b></div>';
-  const certDetail=(p.certificates||[]).map(c=>`<div class="record"><b>${c.name||''} · ${c.typeName||''}</b><span>编号：${c.code||'未录入'}<br>有效期：${c.startDate||'?'} 至 ${c.endDate||'?'}</span></div>`).join('')||'<div class="record"><b>无证书</b></div>';
-  const daily=(p.dailyAttendance||[]).slice(-5).reverse().map(d=>`<div class="record"><b>${d.time||'?'}</b><span>工时 ${d.laborHour||0}H · 进 ${d.inTime||'—'} · 离 ${d.outTime||'—'}</span></div>`).join('')||'<div class="record"><b>无考勤记录</b></div>';
-  const monthly=(p.monthlyAttendance||[]).map(m=>`<div class="record"><b>${m.attendanceDate||'?'}</b><span>月度工时 ${m.laborHour||0}H</span></div>`).join('')||'<div class="record"><b>无月度考勤</b></div>';
-  return `<div class="card"><div class="card-head" onclick="this.parentElement.classList.toggle('open')"><div class="avatar">${p.name?p.name[0]:'?'}</div><div class="info"><b>${p.name||'未录入'}</b><small>${p.unit||''} · ${p.trade||'未录入'} · ${p.team||''}</small></div><span class="badge ${p.status==='已进场'?'on':'off'}">${p.status||''}</span><span class="arrow">▾</span></div><div class="card-body"><div class="section">基本信息</div><div class="facts"><div class="fact"><label>姓名</label><span>${p.name||'未录入'}</span></div><div class="fact"><label>性别</label><span>${p.sex||'未录入'}</span></div><div class="fact"><label>年龄</label><span>${p.age||'—'}岁</span></div><div class="fact"><label>民族</label><span>${p.nation||'未录入'}</span></div><div class="fact"><label>身份证</label><span>${p.idCard||'未录入'}</span></div><div class="fact"><label>手机号</label><span>${p.phone||'未录入'}</span></div><div class="fact"><label>住址</label><span>${p.address||'未录入'}</span></div><div class="fact"><label>发证机关</label><span>${p.grantOrg||'未录入'}</span></div><div class="fact"><label>银行卡</label><span>${p.bankName||''} ${p.bankCard||'未录入'}</span></div><div class="fact"><label>工种</label><span>${p.trade||'未录入'}</span></div><div class="fact"><label>单位</label><span>${p.unit||''}</span></div><div class="fact"><label>班组</label><span>${p.team||''}</span></div><div class="fact"><label>进场时间</label><span>${p.entryDate||'未录入'}</span></div><div class="fact"><label>门禁卡号</label><span>${p.accessCard||'未录入'}</span></div></div><div class="section">劳动合同</div><div class="records">${contracts}</div><div class="section">资格证书</div><div class="records">${certDetail}</div><div class="section">项目服务记录</div><div class="records">${services}</div><div class="section">实时考勤（7月）</div><div class="records">${daily}</div><div class="section">月度考勤（7月）</div><div class="records">${monthly}</div></div></div>`;
- }).join('')||'<div class="empty">没有匹配人员</div>';
+  const q=$('#q').value.trim().toLowerCase();
+  $('#searchWrap').classList.toggle('has-text',!!q);
+  const shown=lite.filter(p=>passFilter(p)&&match(p,q));
+  const view=shown.slice(0,80);
+  $('#hint').textContent=q||filter!=='all'
+    ?`找到 ${shown.length.toLocaleString()} 人${shown.length>80?' · 显示前80':''}`
+    :`共 ${lite.length.toLocaleString()} 人 · 输入关键词即可检索`;
+  $('#list').innerHTML=view.map(cardHtml).join('')||`<div class="empty">没有匹配人员</div>`;
 }
-$('#q').oninput=render;
-init().catch(e=>{$('#hint').textContent='数据加载失败，请刷新重试'});
-</script></body></html>
+
+async function ensureDetail(){
+  if(detailMap) return detailMap;
+  if(detailLoading) return detailLoading;
+  detailLoading=fetch('search-index.json?'+Date.now()).then(r=>r.json()).then(d=>{
+    detailMap=new Map((d.people||[]).map(p=>[p.id,p]));
+    return detailMap;
+  }).finally(()=>{detailLoading=null});
+  return detailLoading;
+}
+
+async function openCard(card){
+  const open=card.classList.toggle('open');
+  if(!open) return;
+  const id=card.dataset.id;
+  const body=card.querySelector('.body');
+  try{
+    const map=await ensureDetail();
+    const p=map.get(id);
+    body.innerHTML=p?detailHtml(p):`<div class="empty">未找到详情</div>`;
+  }catch(e){
+    body.innerHTML=`<div class="empty">详情加载失败，请重试</div>`;
+  }
+}
+
+async function init(){
+  try{
+    const liteData=await fetch('search-lite.json?'+Date.now()).then(r=>r.json());
+    lite=liteData.people||[];
+    renderStats(liteData.summary||{});
+    $('#updated').textContent=`更新 ${liteData.summary?.updatedAt||'—'} · ${lite.length.toLocaleString()} 人`;
+    render();
+    // warm full detail in background
+    ensureDetail().catch(()=>{});
+  }catch(e){
+    $('#hint').textContent='轻量索引加载失败，请刷新';
+    $('#list').innerHTML=`<div class="empty">数据加载失败</div>`;
+  }
+}
+
+$('#q').addEventListener('input',()=>{
+  clearTimeout(timer);
+  timer=setTimeout(render,80);
+});
+$('#clear').onclick=()=>{$('#q').value='';render();$('#q').focus()};
+$('#toolbar').onclick=e=>{
+  const b=e.target.closest('.chip'); if(!b) return;
+  filter=b.dataset.f;
+  document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b));
+  render();
+};
+$('#list').onclick=e=>{
+  const head=e.target.closest('.card-head'); if(!head) return;
+  openCard(head.closest('.card'));
+};
+init();
+</script>
+</body>
+</html>
