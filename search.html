@@ -7,119 +7,54 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>人员快搜 · 东方枢纽</title>
 <style>
-:root{
-  --ink:#152722;--deep:#17342f;--green:#267663;--orange:#c96d29;--red:#b84f42;
-  --muted:#74807a;--line:#e3e8e2;--paper:#fffefa;--soft:#f3f6f2;
-}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--soft);color:var(--ink);font-family:"PingFang SC",-apple-system,BlinkMacSystemFont,sans-serif;font-variant-numeric:tabular-nums}
+:root{--ink:#152722;--deep:#17342f;--green:#267663;--orange:#c96d29;--red:#b84f42;--muted:#74807a;--line:#e3e8e2;--paper:#fffefa;--soft:#f2f5f1}
+*{box-sizing:border-box}html,body{margin:0;background:var(--soft);color:var(--ink);font-family:"PingFang SC",-apple-system,BlinkMacSystemFont,sans-serif;font-variant-numeric:tabular-nums}
 body{min-height:100dvh}
-.top{
-  position:sticky;top:0;z-index:20;
-  padding:calc(12px + env(safe-area-inset-top)) 14px 12px;
-  background:linear-gradient(135deg,#17342f 0%,#235248 55%,#2a5f54 100%);
-  color:#fff;box-shadow:0 8px 24px #17342f33;
-}
+.top{position:sticky;top:0;z-index:30;padding:calc(12px + env(safe-area-inset-top)) 14px 12px;background:linear-gradient(135deg,#17342f,#235248 60%,#2b6156);color:#fff;box-shadow:0 10px 28px #17342f40}
 .brand{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.logo{
-  width:34px;height:34px;border-radius:10px;background:#ffffff18;
-  display:grid;place-items:center;font-weight:800;border:1px solid #ffffff28;
-}
-.brand h1{margin:0;font-size:17px;letter-spacing:-.03em}
-.brand p{margin:2px 0 0;font-size:11px;color:#c4d7d0}
+.logo{width:36px;height:36px;border-radius:11px;background:#ffffff18;border:1px solid #ffffff28;display:grid;place-items:center;font-weight:800}
+.brand h1{margin:0;font-size:17px;letter-spacing:-.03em}.brand p{margin:2px 0 0;font-size:11px;color:#c4d7d0}
+.tabs{display:flex;gap:7px;overflow:auto;margin-bottom:10px;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;height:32px;border:1px solid #ffffff28;border-radius:999px;background:#ffffff12;color:#dceae4;padding:0 12px;font-size:12px}
+.tab.on{background:#fff;color:var(--deep);font-weight:700}
 .search-wrap{position:relative}
-.search-wrap input{
-  width:100%;height:46px;border:0;border-radius:12px;padding:0 44px 0 42px;
-  background:#fff;color:var(--ink);font:16px/1.2 inherit;box-shadow:0 8px 20px #0e292222;
-}
+.search-wrap input{width:100%;height:46px;border:0;border-radius:12px;padding:0 44px 0 42px;background:#fff;color:var(--ink);font:16px/1.2 inherit;box-shadow:0 8px 20px #0e292222}
 .search-wrap input::placeholder{color:#8a948e}
-.search-wrap .icon{
-  position:absolute;left:14px;top:50%;transform:translateY(-50%);
-  width:18px;height:18px;opacity:.55;
-}
-.search-wrap .clear{
-  position:absolute;right:10px;top:50%;transform:translateY(-50%);
-  width:28px;height:28px;border:0;border-radius:8px;background:#edf2ee;color:var(--muted);
-  display:none;place-items:center;font-size:16px;
-}
+.search-wrap .icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;opacity:.55}
+.search-wrap .clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:28px;height:28px;border:0;border-radius:8px;background:#edf2ee;color:var(--muted);display:none;place-items:center;font-size:16px}
 .search-wrap.has-text .clear{display:grid}
-.stats{
-  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;
-  padding:12px 14px 0;
-}
-.stat{
-  background:var(--paper);border:1px solid #fff;border-radius:12px;
-  padding:10px 6px;text-align:center;box-shadow:0 6px 16px #17342f0d;
-}
-.stat b{display:block;font-size:16px;letter-spacing:-.03em}
-.stat span{display:block;margin-top:3px;font-size:10px;color:var(--muted)}
-.stat.emph b{color:var(--orange)}
-.toolbar{
-  display:flex;gap:8px;overflow:auto;padding:12px 14px 8px;
-  scrollbar-width:none;
-}
-.toolbar::-webkit-scrollbar{display:none}
-.chip{
-  flex:0 0 auto;height:32px;border:1px solid var(--line);border-radius:999px;
-  background:#fff;color:var(--muted);padding:0 12px;font-size:12px;
-}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:12px 14px 0}
+.stat{background:var(--paper);border:1px solid #fff;border-radius:12px;padding:10px 6px;text-align:center;box-shadow:0 6px 16px #17342f0d}
+.stat b{display:block;font-size:16px}.stat span{display:block;margin-top:3px;font-size:10px;color:var(--muted)}.stat.emph b{color:var(--orange)}
+.filters{display:flex;gap:8px;overflow:auto;padding:12px 14px 8px;scrollbar-width:none}.filters::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;height:32px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);padding:0 12px;font-size:12px}
 .chip.on{background:var(--deep);border-color:var(--deep);color:#fff;font-weight:700}
 .hint{padding:0 16px 8px;font-size:12px;color:var(--muted)}
 .list{padding:0 12px calc(24px + env(safe-area-inset-bottom))}
-.card{
-  background:var(--paper);border:1px solid #fff;border-radius:16px;margin-bottom:10px;
-  box-shadow:0 8px 20px #17342f0d;overflow:hidden;
-}
-.card-head{
-  display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;
-  padding:12px 14px;cursor:pointer;
-}
-.avatar{
-  width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#e8f3ed,#dcece3);
-  color:var(--green);display:grid;place-items:center;font-weight:800;font-size:16px;
-}
-.meta b{display:block;font-size:15px;letter-spacing:-.02em}
-.meta small{display:block;margin-top:3px;color:var(--muted);font-size:11px;line-height:1.4}
-.side{text-align:right}
-.badge{
-  display:inline-block;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:700;
-}
-.badge.on{background:#e8f3ed;color:var(--green)}
-.badge.off{background:#f9e9e6;color:var(--red)}
-.side .arrow{display:block;margin-top:6px;color:var(--muted);font-size:12px;transition:.15s}
-.card.open .arrow{transform:rotate(180deg)}
-.body{display:none;padding:0 14px 14px;border-top:1px solid #eef2ee}
-.card.open .body{display:block}
+.card{background:var(--paper);border:1px solid #fff;border-radius:16px;margin-bottom:10px;box-shadow:0 8px 20px #17342f0d;overflow:hidden}
+.card-head{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;padding:12px 14px;cursor:pointer}
+.avatar{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#e8f3ed,#dcece3);color:var(--green);display:grid;place-items:center;font-weight:800}
+.meta b{display:block;font-size:15px}.meta small{display:block;margin-top:3px;color:var(--muted);font-size:11px;line-height:1.4}
+.side{text-align:right}.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:700}
+.badge.on{background:#e8f3ed;color:var(--green)}.badge.off{background:#f9e9e6;color:var(--red)}.badge.soft{background:#edf2ee;color:var(--muted)}
+.arrow{display:block;margin-top:6px;color:var(--muted);font-size:12px;transition:.15s}.card.open .arrow{transform:rotate(180deg)}
+.body{display:none;padding:0 14px 14px;border-top:1px solid #eef2ee}.card.open .body{display:block}
 .section{margin-top:14px;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.04em}
-.facts{
-  margin-top:8px;display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);
-  border-radius:12px;overflow:hidden;background:#fff;
-}
-.fact{padding:10px;border-top:1px solid #edf0eb;font-size:12px}
-.fact:nth-child(-n+2){border-top:0}
-.fact:nth-child(odd){border-right:1px solid #edf0eb}
-.fact label{display:block;color:var(--muted);font-size:10px;margin-bottom:3px}
-.fact span{word-break:break-all}
+.facts{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.fact{padding:10px;border-top:1px solid #edf0eb;font-size:12px}.fact:nth-child(-n+2){border-top:0}.fact:nth-child(odd){border-right:1px solid #edf0eb}
+.fact label{display:block;color:var(--muted);font-size:10px;margin-bottom:3px}.fact span{word-break:break-all}
 .records{margin-top:8px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
-.record{padding:10px;border-top:1px solid #edf0eb;font-size:12px}
-.record:first-child{border-top:0}
-.record b{display:block;margin-bottom:3px}
-.record span{color:var(--muted)}
-.empty,.loading{
-  text-align:center;color:var(--muted);padding:48px 20px;font-size:13px;
-}
-.spinner{
-  width:28px;height:28px;border:3px solid #d7e3dc;border-top-color:var(--green);
-  border-radius:50%;margin:0 auto 12px;animation:spin .7s linear infinite;
-}
+.record{padding:10px;border-top:1px solid #edf0eb;font-size:12px}.record:first-child{border-top:0}.record b{display:block;margin-bottom:3px}.record span{color:var(--muted)}
+.tag{display:inline-block;margin:2px 4px 0 0;padding:2px 6px;border-radius:5px;background:#edf5f0;color:var(--green);font-size:10px}
+.panel{margin:12px;background:var(--paper);border:1px solid #fff;border-radius:14px;padding:14px;box-shadow:0 8px 18px #17342f0c}
+.panel h3{margin:0 0 8px;font-size:15px}.panel p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
+.panel input{width:100%;height:42px;margin-top:10px;border:1px solid var(--line);border-radius:10px;padding:0 12px;font:15px inherit}
+.panel button{width:100%;height:42px;margin-top:10px;border:0;border-radius:10px;background:var(--deep);color:#fff;font-weight:700}
+.empty,.loading{text-align:center;color:var(--muted);padding:48px 20px;font-size:13px}
+.spinner{width:28px;height:28px;border:3px solid #d7e3dc;border-top-color:var(--green);border-radius:50%;margin:0 auto 12px;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.foot{
-  text-align:center;color:#9aa49e;font-size:11px;padding:4px 14px 18px;
-}
-@media(max-width:420px){
-  .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .stat:nth-child(4),.stat:nth-child(5){display:none}
-}
+.foot{text-align:center;color:#9aa49e;font-size:11px;padding:4px 14px 18px}
+@media(max-width:420px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -131,120 +66,283 @@ body{min-height:100dvh}
       <p id="updated">加载中…</p>
     </div>
   </div>
+  <div class="tabs" id="tabs">
+    <button class="tab on" data-tab="project">项目总管</button>
+    <button class="tab" data-tab="managed">我管班组</button>
+    <button class="tab" data-tab="labor">劳务助手</button>
+    <button class="tab" data-tab="company">本单位</button>
+  </div>
   <div class="search-wrap" id="searchWrap">
     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#74807a" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-    <input id="q" type="search" enterkeyhint="search" placeholder="姓名 / 身份证 / 手机 / 单位 / 班组 / 工种" autofocus>
+    <input id="q" type="search" enterkeyhint="search" placeholder="姓名 / 身份证 / 手机 / 单位 / 班组 / 工种 / 部门" autofocus>
     <button class="clear" id="clear" aria-label="清空">×</button>
   </div>
 </header>
 
 <section class="stats" id="stats"></section>
-<div class="toolbar" id="toolbar">
-  <button class="chip on" data-f="all">全部</button>
-  <button class="chip" data-f="active">已进场</button>
-  <button class="chip" data-f="exit">已退场</button>
-  <button class="chip" data-f="managed">我管班组</button>
-  <button class="chip" data-f="cert">有证书</button>
-</div>
-<div class="hint" id="hint">正在加载轻量索引…</div>
+<div class="filters" id="filters"></div>
+<div class="hint" id="hint">正在加载…</div>
 <main class="list" id="list"></main>
-<div class="foot">轻量索引秒开 · 详情按需加载 · 点挂件即可直达</div>
+<div class="foot">项目服务已显示项目名称 · 我管班组叠加劳务档案 · 本单位可一键查询</div>
 
 <script>
 const $=s=>document.querySelector(s);
 const MANAGED=['黄卫华_2414班组','上海东站九分弱电班组','(有登高车操作证)上海东站九分弱电班组','(有登高车操作证)上海东站九分弱电黄卫华班组'];
-let lite=[], detailMap=null, filter='all', timer=null, detailLoading=null;
+const money=n=>`¥${Number(n||0).toLocaleString('zh-CN')}`;
+const esc=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
+const val=s=>s||'未录入';
+let tab='project', filter='all', timer=null;
+let projectLite=[], projectDetail=null, laborPeople=null, companyPeople=null, laborById=new Map();
+let laborUnlocked=false, companyUnlocked=false;
 
-function esc(s){return String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;')}
-function val(s){return s||'未录入'}
-function avatar(name){return esc((name||'?').slice(0,1))}
-
-function match(p,q){
-  if(!q) return true;
-  return [p.n,p.idc,p.ph,p.u,p.t,p.w].join(' ').toLowerCase().includes(q);
+function b64(s){return Uint8Array.from(atob(s),c=>c.charCodeAt(0))}
+async function decryptEnvelope(url,password){
+  const e=await fetch(url+'?t='+Date.now()).then(r=>r.json());
+  const material=await crypto.subtle.importKey('raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveKey']);
+  const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(e.salt),iterations:e.iterations,hash:'SHA-256'},material,{name:'AES-GCM',length:256},false,['decrypt']);
+  const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(e.iv)},key,b64(e.ciphertext));
+  return JSON.parse(new TextDecoder().decode(plain));
 }
-function passFilter(p){
+
+function setStats(items){
+  $('#stats').innerHTML=items.map(([b,s,e])=>`<div class="stat${e?' emph':''}"><b>${Number(b||0).toLocaleString()}</b><span>${s}</span></div>`).join('');
+}
+function setFilters(items){
+  $('#filters').innerHTML=items.map(([id,label])=>`<button class="chip ${filter===id?'on':''}" data-f="${id}">${label}</button>`).join('');
+}
+
+function projectPass(p){
+  if(tab==='managed' && !p.managed) return false;
   if(filter==='active') return p.s==='已进场';
   if(filter==='exit') return p.s==='已退场';
-  if(filter==='managed') return MANAGED.includes(p.t);
-  if(filter==='cert') return !!(detailMap? (detailMap.get(p.id)?.q?.length) : p.hasQ);
+  if(filter==='cert') return !!(projectDetail?.get(p.id)?.q?.length);
   return true;
 }
-
-function renderStats(summary){
-  const items=[
-    [summary.records,'总人数',false],
-    [summary.active,'已进场',false],
-    [summary.managed,'我管班组',true],
-    [summary.managedActive,'我管在场',true],
-    [summary.withCert,'有证书',false]
-  ];
-  $('#stats').innerHTML=items.map(([b,s,e])=>`<div class="stat${e?' emph':''}"><b>${Number(b).toLocaleString()}</b><span>${s}</span></div>`).join('');
+function laborPass(p){
+  if(filter==='active') return p.s==='在场';
+  if(filter==='exit') return p.s==='退场';
+  if(filter==='gongqiang') return p.uid==='gongqiang'||p.u.includes('共强');
+  if(filter==='mingfu') return p.uid==='mingfu'||p.u.includes('铭富');
+  return true;
+}
+function companyPass(p){
+  if(filter==='onjob') return !String(p.status||'').includes('离');
+  if(filter==='retire') return !!p.retire;
+  return true;
+}
+function match(p,q,keys){
+  if(!q) return true;
+  return keys.map(k=>p[k]||'').join(' ').toLowerCase().includes(q);
 }
 
-function cardHtml(p){
-  return `<article class="card" data-id="${esc(p.id)}">
-    <div class="card-head">
-      <div class="avatar">${avatar(p.n)}</div>
-      <div class="meta">
-        <b>${esc(p.n||'未录入')}</b>
-        <small>${esc(p.u||'未录入单位')} · ${esc(p.w||'未录入工种')}<br>${esc(p.t||'未录入班组')}</small>
-      </div>
-      <div class="side">
-        <span class="badge ${p.s==='已进场'?'on':'off'}">${esc(p.s||'未知')}</span>
-        <span class="arrow">▾</span>
-      </div>
-    </div>
-    <div class="body" id="body-${esc(p.id)}"><div class="loading"><div class="spinner"></div>加载详情…</div></div>
-  </article>`;
+function cardBase(id,name,sub,badgeText,badgeClass){
+  return `<article class="card" data-id="${esc(id)}"><div class="card-head"><div class="avatar">${esc((name||'?').slice(0,1))}</div><div class="meta"><b>${esc(name||'未录入')}</b><small>${sub}</small></div><div class="side"><span class="badge ${badgeClass}">${esc(badgeText||'')}</span><span class="arrow">▾</span></div></div><div class="body" id="body-${esc(id)}"><div class="loading"><div class="spinner"></div>加载详情…</div></div></article>`;
 }
 
-function detailHtml(p){
-  const contracts=p.c?.length?p.c.map(x=>`<div class="record"><b>${esc(x.type||'合同')}</b><span>${esc(x.start||'?')} 至 ${esc(x.end||'?')}</span></div>`).join(''):`<div class="record"><b>无合同记录</b></div>`;
-  const certs=p.q?.length?p.q.map(x=>`<div class="record"><b>${esc(x.name||'证书')}</b><span>编号 ${esc(x.code||'未录入')}<br>有效期 ${esc(x.start||'?')} 至 ${esc(x.end||'?')}</span></div>`).join(''):`<div class="record"><b>无证书记录</b></div>`;
-  const services=p.svc?.length?p.svc.map(x=>`<div class="record"><b>${esc(x.corp||'项目服务')}</b><span>${esc(x.team||'')} · ${esc(x.trade||'')}<br>进场 ${esc(x.entry||'?')} · 退场 ${esc(x.exit||'当前在场')}</span></div>`).join(''):`<div class="record"><b>无服务记录</b></div>`;
-  const daily=p.da?.length?p.da.slice().reverse().map(x=>`<div class="record"><b>${esc(x.time||'?')}</b><span>工时 ${esc(x.h||0)}H · 进 ${esc(x.in||'—')} · 离 ${esc(x.out||'—')}</span></div>`).join(''):`<div class="record"><b>无近期考勤</b></div>`;
-  const monthly=p.ma?.length?p.ma.map(x=>`<div class="record"><b>${esc(x.m||'?')}</b><span>月度工时 ${esc(x.h||0)}H</span></div>`).join(''):`<div class="record"><b>无月度考勤</b></div>`;
+function records(list, empty='无记录'){
+  if(!list||!list.length) return `<div class="records"><div class="record"><b>${empty}</b></div></div>`;
+  return `<div class="records">${list.join('')}</div>`;
+}
+function fact(label,value){return `<div class="fact"><label>${label}</label><span>${esc(val(value))}</span></div>`}
+
+function projectDetailHtml(p, labor){
+  const prev=p.svc?.find(x=>x.exit)||null;
+  const current=p.svc?.find(x=>!x.exit)||p.svc?.[0]||null;
+  const svc=(p.svc||[]).map(x=>`<div class="record"><b>${esc(x.project||'未命名项目')}</b><span>${esc(x.corp||'')} · ${esc(x.team||'')} · ${esc(x.trade||'')}<br>进场 ${esc(x.entry||'?')} · 退场 ${esc(x.exit||'当前在场')}</span></div>`);
+  const contracts=(p.c||[]).map(x=>`<div class="record"><b>${esc(x.type||'合同')}</b><span>${esc(x.start||'?')} 至 ${esc(x.end||'?')}${x.team?` · ${esc(x.team)}`:''}</span></div>`);
+  const certs=(p.q||[]).map(x=>`<div class="record"><b>${esc(x.name||'证书')}</b><span>编号 ${esc(x.code||'未录入')}${x.type?` · ${esc(x.type)}`:''}<br>有效期 ${esc(x.start||'?')} 至 ${esc(x.end||'?')}</span></div>`);
+  const daily=(p.da||[]).slice().reverse().map(x=>`<div class="record"><b>${esc(x.time||'?')}</b><span>工时 ${esc(x.h||0)}H · 进 ${esc(x.in||'—')} · 离 ${esc(x.out||'—')}</span></div>`);
+  const monthly=(p.ma||[]).map(x=>`<div class="record"><b>${esc(x.m||'?')}</b><span>月度工时 ${esc(x.h||0)}H</span></div>`);
+  let laborBlock='';
+  if(labor){
+    const pays=[...(labor.pay||[])].sort((a,b)=>String(b.month||'').localeCompare(String(a.month||''))).map(x=>`<div class="record"><b>${esc(x.month||'?')} · ${esc(x.status||'')}</b><span>日薪 ${labor.rate?money(labor.rate)+'/天':'未录入'} · 应发 ${money(x.expectedAmount??x.amount)} / 实发 ${money(x.paidAmount)}<br>${x.componentsEntered?`基本 ${money(x.baseAmount)} · 绩效 ${money(x.performanceAmount)} · 高温 ${money(x.heatAllowance)} · 其他 ${money(x.otherAdditions)} · 扣款 ${money(x.deductions)}`:''}${x.remark?`<br>备注：${esc(x.remark)}`:''}</span></div>`);
+    const atts=[...(labor.att||[])].sort((a,b)=>String(b.month||'').localeCompare(String(a.month||''))).map(x=>`<div class="record"><b>${esc(x.month||'?')}</b><span>周期 ${esc(x.period||'—')} · 出勤 ${esc(x.actualDays??'—')} 天 · 加班 ${esc(x.overtimeHours||0)}H${x.note?`<br>备注：${esc(x.note)}`:''}</span></div>`);
+    const certs2=(labor.cert||[]).map(x=>`<div class="record"><b>${esc(x.type||'证书')}</b><span>${esc(x.number||'未录入')} · ${esc(x.issuer||'')}<br>${esc(x.issueDate||'?')} 至 ${esc(x.expiryDate||x.validUntil||'?')}</span></div>`);
+    const hist=(labor.hist||[]).map(x=>`<div class="record"><b>${x.type==='entry'?'进场':'退场'}</b><span>${esc(x.date||'')}${x.note?` · ${esc(x.note)}`:''}</span></div>`);
+    laborBlock=`
+      <div class="section">劳务档案（精密管控）</div>
+      <div class="facts">
+        ${fact('日薪', labor.rate?money(labor.rate)+'/天':'未录入')}
+        ${fact('劳务状态', labor.s)}
+        ${fact('劳务单位', labor.u)}
+        ${fact('体检日期', labor.med)}
+        ${fact('银行卡', labor.bc)}
+        ${fact('开户行', labor.bank)}
+      </div>
+      <div class="section">工资历史</div>${records(pays,'无工资记录')}
+      <div class="section">月度考勤（劳务）</div>${records(atts,'无劳务考勤')}
+      <div class="section">劳务证书</div>${records(certs2,'无劳务证书')}
+      <div class="section">进退场历史</div>${records(hist,'无进退场历史')}`;
+  }else if(p.managed){
+    laborBlock=`<div class="section">劳务档案</div><div class="records"><div class="record"><b>未匹配到劳务助手档案</b><span>此人在我管班组，但劳务加密库中暂无同身份证记录</span></div></div>`;
+  }
   return `
+    <div class="section">项目轨迹摘要</div>
+    <div class="facts">
+      ${fact('当前项目', current?.project||'东方枢纽一标段')}
+      ${fact('上一个项目', prev?.project||'无上一条退场记录')}
+      ${fact('当前单位', p.u)}
+      ${fact('当前班组', p.t)}
+    </div>
     <div class="section">基本信息</div>
     <div class="facts">
-      <div class="fact"><label>身份证</label><span>${esc(val(p.idc))}</span></div>
-      <div class="fact"><label>手机号</label><span>${esc(val(p.ph))}</span></div>
-      <div class="fact"><label>性别 / 年龄</label><span>${esc(val(p.x))} / ${esc(p.a||'—')} 岁</span></div>
-      <div class="fact"><label>民族</label><span>${esc(val(p.nation))}</span></div>
-      <div class="fact"><label>出生日期</label><span>${esc(val(p.bd))}</span></div>
-      <div class="fact"><label>进场时间</label><span>${esc(val(p.e))}</span></div>
-      <div class="fact"><label>住址</label><span>${esc(val(p.addr))}</span></div>
-      <div class="fact"><label>门禁卡号</label><span>${esc(val(p.ac))}</span></div>
-      <div class="fact"><label>开户银行</label><span>${esc(val(p.b))}</span></div>
-      <div class="fact"><label>银行卡号</label><span>${esc(val(p.bc))}</span></div>
+      ${fact('身份证', p.idc)} ${fact('手机号', p.ph)}
+      ${fact('性别/年龄', `${val(p.x)} / ${p.a||'—'}岁`)} ${fact('民族', p.nation)}
+      ${fact('出生日期', p.bd)} ${fact('进场时间', p.e)}
+      ${fact('住址', p.addr)} ${fact('发证机关', p.grant)}
+      ${fact('开户银行', p.b)} ${fact('银行卡号', p.bc)}
+      ${fact('门禁卡号', p.ac)} ${fact('身份/工种', `${val(p.role)} / ${val(p.w)}`)}
     </div>
-    <div class="section">劳动合同</div><div class="records">${contracts}</div>
-    <div class="section">资格证书</div><div class="records">${certs}</div>
-    <div class="section">项目服务</div><div class="records">${services}</div>
-    <div class="section">近期考勤</div><div class="records">${daily}</div>
-    <div class="section">月度考勤</div><div class="records">${monthly}</div>`;
+    <div class="section">项目服务 / 进退场（含项目名称）</div>${records(svc,'无项目服务记录')}
+    <div class="section">劳动合同</div>${records(contracts,'无合同记录')}
+    <div class="section">资格证书</div>${records(certs,'无证书记录')}
+    <div class="section">实时考勤</div>${records(daily,'无近期考勤')}
+    <div class="section">月度考勤</div>${records(monthly,'无月度考勤')}
+    ${laborBlock}`;
+}
+
+function laborDetailHtml(p){
+  const pays=[...(p.pay||[])].sort((a,b)=>String(b.month||'').localeCompare(String(a.month||''))).map(x=>`<div class="record"><b>${esc(x.month||'?')} · ${esc(x.status||'')}</b><span>应发 ${money(x.expectedAmount??x.amount)} / 实发 ${money(x.paidAmount)}${x.remark?`<br>备注：${esc(x.remark)}`:''}</span></div>`);
+  const atts=[...(p.att||[])].sort((a,b)=>String(b.month||'').localeCompare(String(a.month||''))).map(x=>`<div class="record"><b>${esc(x.month||'?')}</b><span>出勤 ${esc(x.actualDays??'—')} 天 · 加班 ${esc(x.overtimeHours||0)}H · 周期 ${esc(x.period||'—')}</span></div>`);
+  const certs=(p.cert||[]).map(x=>`<div class="record"><b>${esc(x.type||'证书')}</b><span>${esc(x.number||'未录入')} · ${esc(x.issuer||'')}</span></div>`);
+  const hist=(p.hist||[]).map(x=>`<div class="record"><b>${x.type==='entry'?'进场':'退场'}</b><span>${esc(x.date||'')}${x.note?` · ${esc(x.note)}`:''}</span></div>`);
+  return `
+    <div class="section">劳务信息</div>
+    <div class="facts">
+      ${fact('单位', p.u)} ${fact('工种', p.w)}
+      ${fact('日薪', p.rate?money(p.rate)+'/天':'未录入')} ${fact('状态', p.s)}
+      ${fact('身份证', p.idc)} ${fact('手机号', p.ph)}
+      ${fact('银行卡', p.bc)} ${fact('开户行', p.bank)}
+      ${fact('进场', p.e)} ${fact('退场', p.ex||'未退场')}
+      ${fact('体检', p.med)} ${fact('住址', p.addr)}
+    </div>
+    <div class="section">工资历史</div>${records(pays,'无工资记录')}
+    <div class="section">月度考勤</div>${records(atts,'无考勤记录')}
+    <div class="section">证书</div>${records(certs,'无证书')}
+    <div class="section">进退场历史</div>${records(hist,'无历史')}`;
+}
+
+function companyDetailHtml(p){
+  const certs=Array.isArray(p.certs)?p.certs.map(x=>`<span class="tag">${esc(typeof x==='string'?x:(x.type||x.name||JSON.stringify(x)))}</span>`).join(' '):esc(p.certs||'无');
+  const hist=(p.hist||[]).map(x=>`<div class="record"><b>${esc(x.status||x.type||'记录')}</b><span>${esc(x.date||x.period||'')}${x.note?` · ${esc(x.note)}`:''}</span></div>`);
+  return `
+    <div class="section">本单位信息</div>
+    <div class="facts">
+      ${fact('部门', p.dep)} ${fact('岗位', p.pos)}
+      ${fact('性别/年龄', `${val(p.x)} / ${p.age||'—'}岁`)} ${fact('状态', p.status)}
+      ${fact('手机号', p.ph)} ${fact('籍贯', p.native)}
+      ${fact('学历', p.edu)} ${fact('专业', p.major)}
+      ${fact('学校', p.school)} ${fact('本单位年限', p.years)}
+      ${fact('工龄', p.exp)} ${fact('退休类别', p.retire)}
+    </div>
+    <div class="section">证书</div><div class="records"><div class="record"><b>证书信息</b><span>${certs||'无'}</span></div></div>
+    <div class="section">备注</div><div class="records"><div class="record"><b>备注</b><span>${esc(p.remark||'—')}</span></div></div>
+    <div class="section">任职/状态历史</div>${records(hist,'无历史')}`;
+}
+
+async function ensureProjectDetail(){
+  if(projectDetail) return projectDetail;
+  const d=await fetch('search-index.json?'+Date.now()).then(r=>r.json());
+  projectDetail=new Map((d.people||[]).map(p=>[p.id,p]));
+  return projectDetail;
+}
+
+function unlockPanel(kind){
+  const title=kind==='labor'?'劳务助手加密档案':'本单位花名册加密档案';
+  const tip=kind==='labor'?'输入劳务助手查询密码后，可查看日薪、工资、考勤等精密信息':'输入本单位查询密码后，可查询本单位人员';
+  return `<div class="panel"><h3>${title}</h3><p>${tip}</p><input id="pw" type="password" placeholder="查询密码"><button id="unlockBtn">解锁并查询</button></div>`;
+}
+
+async function unlock(kind,password){
+  if(kind==='labor'){
+    const d=await decryptEnvelope('encrypted-data.json',password);
+    laborPeople=[]; laborById=new Map();
+    for(const u of d.units||[]){
+      for(const p of u.people||[]){
+        const item={
+          id:p.idCard||`${u.id}|${p.name}`, n:p.name||'', idc:p.idCard||'', ph:p.phone||'', u:u.name||'', uid:u.id||'',
+          w:p.trade||'', x:p.sex||'', s:p.status||'', e:p.entryDate||'', ex:p.exitDate||'', addr:p.address||'',
+          bank:p.bank||'', bc:p.bankCard||'', rate:p.dailyRate||'', med:p.medicalDate||'',
+          pay:p.payrollHistory||[], att:p.attendanceHistory||[], cert:p.certificates||[], hist:p.statusHistory||[]
+        };
+        laborPeople.push(item);
+        if(item.idc) laborById.set(item.idc,item);
+      }
+    }
+    laborUnlocked=true;
+  }else{
+    const d=await decryptEnvelope('company-encrypted-data.json',password);
+    companyPeople=(d.people||[]).map(p=>({
+      id:p.id||p.name, n:p.name||'', dep:p.department||'', pos:p.position||'', ph:p.phone||'', x:p.sex||'',
+      age:p.age||'', edu:p.education||p.highestEducation||'', school:p.school||'', major:p.major||'',
+      native:p.nativePlace||'', status:p.employmentStatus||'', years:p.yearsInCompany||'', exp:p.experienceYears||'',
+      certs:p.certificates||[], remark:p.remark||'', retire:p.retirementCategory||'', hist:p.employmentHistory||[]
+    }));
+    companyUnlocked=true;
+  }
+}
+
+function currentList(){
+  const q=$('#q').value.trim().toLowerCase();
+  if(tab==='project'||tab==='managed'){
+    return projectLite.filter(p=>projectPass(p)&&match(p,q,['n','idc','ph','u','t','w']));
+  }
+  if(tab==='labor'){
+    if(!laborUnlocked) return null;
+    return laborPeople.filter(p=>laborPass(p)&&match(p,q,['n','idc','ph','u','w']));
+  }
+  if(tab==='company'){
+    if(!companyUnlocked) return null;
+    return companyPeople.filter(p=>companyPass(p)&&match(p,q,['n','dep','pos','ph','edu','major']));
+  }
+  return [];
 }
 
 function render(){
-  const q=$('#q').value.trim().toLowerCase();
+  const q=$('#q').value.trim();
   $('#searchWrap').classList.toggle('has-text',!!q);
-  const shown=lite.filter(p=>passFilter(p)&&match(p,q));
-  const view=shown.slice(0,80);
-  $('#hint').textContent=q||filter!=='all'
-    ?`找到 ${shown.length.toLocaleString()} 人${shown.length>80?' · 显示前80':''}`
-    :`共 ${lite.length.toLocaleString()} 人 · 输入关键词即可检索`;
-  $('#list').innerHTML=view.map(cardHtml).join('')||`<div class="empty">没有匹配人员</div>`;
+  if(tab==='project'){
+    setStats([[projectLite.length,'项目总人数'],[projectLite.filter(p=>p.s==='已进场').length,'已进场'],[projectLite.filter(p=>p.managed).length,'我管班组',true],[projectLite.filter(p=>p.managed&&p.s==='已进场').length,'我管在场',true]]);
+    setFilters([['all','全部'],['active','已进场'],['exit','已退场'],['cert','有证书']]);
+  }else if(tab==='managed'){
+    const m=projectLite.filter(p=>p.managed);
+    setStats([[m.length,'我管人数',true],[m.filter(p=>p.s==='已进场').length,'当前在场',true],[m.filter(p=>p.s==='已退场').length,'已退场'],[laborUnlocked?m.filter(p=>laborById.has(p.idc)).length:0,'已匹配劳务']]);
+    setFilters([['all','全部'],['active','已进场'],['exit','已退场']]);
+  }else if(tab==='labor'){
+    if(!laborUnlocked){ setStats([[50,'劳务人员'],[2,'单位'],[0,'待解锁'],[0,'工资档案']]); setFilters([]); $('#hint').textContent='劳务助手为加密档案，解锁后可精密查询'; $('#list').innerHTML=unlockPanel('labor'); bindUnlock('labor'); return; }
+    setStats([[laborPeople.length,'劳务人数'],[laborPeople.filter(p=>p.s==='在场').length,'在场'],[laborPeople.filter(p=>p.uid==='gongqiang'||p.u.includes('共强')).length,'共强'],[laborPeople.filter(p=>p.uid==='mingfu'||p.u.includes('铭富')).length,'铭富']]);
+    setFilters([['all','全部'],['active','在场'],['exit','退场'],['gongqiang','共强'],['mingfu','铭富']]);
+  }else if(tab==='company'){
+    if(!companyUnlocked){ setStats([[314,'本单位'],[0,'待解锁'],[0,'部门'],[0,'岗位']]); setFilters([]); $('#hint').textContent='本单位花名册为加密档案，解锁后可一键查询'; $('#list').innerHTML=unlockPanel('company'); bindUnlock('company'); return; }
+    setStats([[companyPeople.length,'本单位人数'],[new Set(companyPeople.map(p=>p.dep).filter(Boolean)).size,'部门数'],[companyPeople.filter(p=>p.retire).length,'临近/延迟退休'],[companyPeople.filter(p=>String(p.status||'').includes('离')).length,'离职相关']]);
+    setFilters([['all','全部'],['onjob','在职口径'],['retire','退休相关']]);
+  }
+
+  const list=currentList()||[];
+  const view=list.slice(0,80);
+  $('#hint').textContent=q||filter!=='all'?`找到 ${list.length.toLocaleString()} 人${list.length>80?' · 显示前80':''}`:`共 ${list.length.toLocaleString()} 人 · 输入关键词即可检索`;
+  if(tab==='project'||tab==='managed'){
+    $('#list').innerHTML=view.map(p=>cardBase(p.id,p.n,`${esc(p.u||'未录入单位')} · ${esc(p.w||'未录入工种')}<br>${esc(p.t||'未录入班组')}`,p.s,p.s==='已进场'?'on':'off')).join('')||`<div class="empty">没有匹配人员</div>`;
+  }else if(tab==='labor'){
+    $('#list').innerHTML=view.map(p=>cardBase(p.id,p.n,`${esc(p.u||'')} · ${esc(p.w||'')}<br>日薪 ${p.rate?money(p.rate)+'/天':'未录入'}`,p.s,p.s==='在场'?'on':'off')).join('')||`<div class="empty">没有匹配人员</div>`;
+  }else{
+    $('#list').innerHTML=view.map(p=>cardBase(p.id,p.n,`${esc(p.dep||'未录入部门')} · ${esc(p.pos||'未录入岗位')}<br>${esc(p.ph||'无手机')}`,p.status||'在册',p.status&&String(p.status).includes('离')?'off':'soft')).join('')||`<div class="empty">没有匹配人员</div>`;
+  }
 }
 
-async function ensureDetail(){
-  if(detailMap) return detailMap;
-  if(detailLoading) return detailLoading;
-  detailLoading=fetch('search-index.json?'+Date.now()).then(r=>r.json()).then(d=>{
-    detailMap=new Map((d.people||[]).map(p=>[p.id,p]));
-    return detailMap;
-  }).finally(()=>{detailLoading=null});
-  return detailLoading;
+function bindUnlock(kind){
+  $('#unlockBtn').onclick=async()=>{
+    const pw=$('#pw').value;
+    if(!pw) return alert('请输入查询密码');
+    try{
+      $('#unlockBtn').textContent='解锁中…';
+      await unlock(kind,pw);
+      render();
+    }catch(e){
+      alert('密码不正确或数据加载失败');
+      $('#unlockBtn').textContent='解锁并查询';
+    }
+  };
 }
 
 async function openCard(card){
@@ -253,45 +351,52 @@ async function openCard(card){
   const id=card.dataset.id;
   const body=card.querySelector('.body');
   try{
-    const map=await ensureDetail();
-    const p=map.get(id);
-    body.innerHTML=p?detailHtml(p):`<div class="empty">未找到详情</div>`;
+    if(tab==='project'||tab==='managed'){
+      const map=await ensureProjectDetail();
+      const p=map.get(id);
+      const labor=p?.idc?laborById.get(p.idc):null;
+      // if managed and labor not unlocked, still show project detail; labor block will hint
+      if(tab==='managed' && !laborUnlocked){
+        // try silent? no, keep password gate for labor-only tab; managed can show project first
+      }
+      body.innerHTML=p?projectDetailHtml(p, labor):`<div class="empty">未找到详情</div>`;
+    }else if(tab==='labor'){
+      const p=laborPeople.find(x=>x.id===id);
+      body.innerHTML=p?laborDetailHtml(p):`<div class="empty">未找到详情</div>`;
+    }else{
+      const p=companyPeople.find(x=>x.id===id);
+      body.innerHTML=p?companyDetailHtml(p):`<div class="empty">未找到详情</div>`;
+    }
   }catch(e){
     body.innerHTML=`<div class="empty">详情加载失败，请重试</div>`;
   }
 }
 
 async function init(){
-  try{
-    const liteData=await fetch('search-lite.json?'+Date.now()).then(r=>r.json());
-    lite=liteData.people||[];
-    renderStats(liteData.summary||{});
-    $('#updated').textContent=`更新 ${liteData.summary?.updatedAt||'—'} · ${lite.length.toLocaleString()} 人`;
-    render();
-    // warm full detail in background
-    ensureDetail().catch(()=>{});
-  }catch(e){
-    $('#hint').textContent='轻量索引加载失败，请刷新';
-    $('#list').innerHTML=`<div class="empty">数据加载失败</div>`;
-  }
+  const lite=await fetch('search-lite.json?'+Date.now()).then(r=>r.json());
+  projectLite=lite.people||[];
+  $('#updated').textContent=`更新 ${lite.summary?.updatedAt||'—'} · 项目 ${lite.summary?.records||0} · 劳务 ${lite.summary?.labor||0} · 本单位 ${lite.summary?.company||0}`;
+  render();
+  ensureProjectDetail().catch(()=>{});
 }
 
-$('#q').addEventListener('input',()=>{
-  clearTimeout(timer);
-  timer=setTimeout(render,80);
-});
+$('#q').addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(render,70)});
 $('#clear').onclick=()=>{$('#q').value='';render();$('#q').focus()};
-$('#toolbar').onclick=e=>{
-  const b=e.target.closest('.chip'); if(!b) return;
-  filter=b.dataset.f;
-  document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b));
+$('#tabs').onclick=e=>{
+  const b=e.target.closest('.tab'); if(!b) return;
+  tab=b.dataset.tab; filter='all';
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
   render();
+};
+$('#filters').onclick=e=>{
+  const b=e.target.closest('.chip'); if(!b) return;
+  filter=b.dataset.f; render();
 };
 $('#list').onclick=e=>{
   const head=e.target.closest('.card-head'); if(!head) return;
   openCard(head.closest('.card'));
 };
-init();
+init().catch(()=>{$('#hint').textContent='加载失败，请刷新';});
 </script>
 </body>
 </html>
