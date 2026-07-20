@@ -22,27 +22,28 @@ def decrypt(path, password):
     plain=AESGCM(key).decrypt(iv, ct, None)
     return json.loads(plain.decode())
 
-# 1) rebuild services with projectName from checkpoint
+# 1) rebuild services with projectName from checkpoint when available
 old=json.loads(base64.b64decode(json.load(open(OUT))['payload']))
-ck=pickle.load(open(CKPT,'rb'))
-results=ck['results']
 fixed=0
-for p in old['people']:
-    pwid=p.get('projectWorkerId')
-    if not pwid or pwid not in results: continue
-    d,c,ce,s=results[pwid]
-    p['services']=[{
-        'projectName':x.get('projectName') or '',
-        'corpName':x.get('corpName') or '',
-        'teamName':x.get('teamName') or '',
-        'trade':x.get('workerTypeName') or '',
-        'entryDate':date(x.get('entryDate')),
-        'exitDate':date(x.get('exitDate'))
-    } for x in s]
-    fixed+=1
-old['project']['updatedAt']=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-raw=json.dumps(old,ensure_ascii=False,separators=(',',':')).encode()
-tmp=OUT+'.new'; json.dump({'payload':base64.b64encode(raw).decode()},open(tmp,'w'),ensure_ascii=False); os.replace(tmp,OUT)
+if os.path.exists(CKPT):
+    ck=pickle.load(open(CKPT,'rb'))
+    results=ck['results']
+    for p in old['people']:
+        pwid=p.get('projectWorkerId')
+        if not pwid or pwid not in results: continue
+        d,c,ce,s=results[pwid]
+        p['services']=[{
+            'projectName':x.get('projectName') or '',
+            'corpName':x.get('corpName') or '',
+            'teamName':x.get('teamName') or '',
+            'trade':x.get('workerTypeName') or '',
+            'entryDate':date(x.get('entryDate')),
+            'exitDate':date(x.get('exitDate'))
+        } for x in s]
+        fixed+=1
+    old['project']['updatedAt']=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    raw=json.dumps(old,ensure_ascii=False,separators=(',',':')).encode()
+    tmp=OUT+'.new'; json.dump({'payload':base64.b64encode(raw).decode()},open(tmp,'w'),ensure_ascii=False); os.replace(tmp,OUT)
 print('services rebuilt for',fixed,'people')
 
 # 2) decrypt labor + company for search packages
