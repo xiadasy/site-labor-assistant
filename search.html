@@ -230,14 +230,17 @@ function companyDetailHtml(p){
   const certs=Array.isArray(p.certs)?p.certs.map(x=>`<span class="tag">${esc(typeof x==='string'?x:(x.type||x.name||JSON.stringify(x)))}</span>`).join(' '):esc(p.certs||'无');
   const hist=(p.hist||[]).map(x=>`<div class="record"><b>${esc(x.status||x.type||'记录')}</b><span>${esc(x.date||x.period||'')}${x.note?` · ${esc(x.note)}`:''}</span></div>`);
   return `
-    <div class="section">本单位信息</div>
+    <div class="section">基本信息</div>
     <div class="facts">
+      ${fact('姓名', p.n)} ${fact('性别/年龄', `${val(p.x)} / ${p.age||'—'}岁`)}
+      ${fact('身份证号', p.idCard||p.idc||'未录入')} ${fact('手机号', p.ph)}
       ${fact('部门', p.dep)} ${fact('岗位', p.pos)}
-      ${fact('性别/年龄', `${val(p.x)} / ${p.age||'—'}岁`)} ${fact('状态', p.status)}
-      ${fact('手机号', p.ph)} ${fact('籍贯', p.native)}
-      ${fact('学历', p.edu)} ${fact('专业', p.major)}
-      ${fact('学校', p.school)} ${fact('本单位年限', p.years)}
-      ${fact('工龄', p.exp)} ${fact('退休类别', p.retire)}
+      ${fact('管理职务', p.mgmtPosition||'—')} ${fact('管理单位', p.mgmtUnit||'—')}
+      ${fact('车牌号', p.plate||'—')} ${fact('状态', p.status||p.employmentStatus)}
+      ${fact('籍贯', p.native)} ${fact('学历', p.edu)}
+      ${fact('专业', p.major)} ${fact('学校', p.school)}
+      ${fact('本单位年限', p.years)} ${fact('工龄', p.exp)}
+      ${fact('退休类别', p.retire||'—')}
     </div>
     <div class="section">证书</div><div class="records"><div class="record"><b>证书信息</b><span>${certs||'无'}</span></div></div>
     <div class="section">备注</div><div class="records"><div class="record"><b>备注</b><span>${esc(p.remark||'—')}</span></div></div>
@@ -280,7 +283,8 @@ async function unlock(kind,password){
       id:p.id||p.name, n:p.name||'', dep:p.department||'', pos:p.position||'', ph:p.phone||'', x:p.sex||'',
       age:p.age||'', edu:p.education||p.highestEducation||'', school:p.school||'', major:p.major||'',
       native:p.nativePlace||'', status:p.employmentStatus||'', years:p.yearsInCompany||'', exp:p.experienceYears||'',
-      certs:p.certificates||[], remark:p.remark||'', retire:p.retirementCategory||'', hist:p.employmentHistory||[]
+      certs:p.certificates||[], remark:p.remark||'', retire:p.retirementCategory||'', hist:p.employmentHistory||[],
+      idCard:p.idCard||'', mgmtPosition:p.mgmtPosition||'', mgmtUnit:p.mgmtUnit||'', plate:p.plate||''
     }));
     companyUnlocked=true;
   }
