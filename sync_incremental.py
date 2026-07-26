@@ -58,11 +58,36 @@ def call(path,p):
 def pages(path,p,size=5000):
     p={**p,'pageIndex':1,'pageSize':size,'total':0}
     first=call(path,p)
-    total=first.get('total'); rows=first.get('rows',[])
+    total=first.get('total'); rows=list(first.get('rows',[]))
     if not isinstance(total,int) or total<0: raise RuntimeError(f'{path} total invalid: {total}')
-    for i in range(2,(total+size-1)//size+1):
-        rows+=call(path,{**p,'pageIndex':i}).get('rows',[])
-    if len(rows)!=total: raise RuntimeError(f'{path} total mismatch: {total}/{len(rows)}')
+    # 继续翻页：以接口 total 为准，同时兼容拉取过程中 total 微变
+    page=2
+    max_pages=max(1,(total+size-1)//size)+2
+    while page<=max_pages:
+        if total and len(rows)>=total and page> (total+size-1)//size:
+            break
+        batch=call(path,{**p,'pageIndex':page}).get('rows',[])
+        if not batch:
+            break
+        rows+=batch
+        page+=1
+        # 若已经多拿完整页且超过声明 total，停止
+        if total and len(rows)>=total and len(batch)<size:
+            break
+    # 去重（部分考勤接口分页边界会重复 1 条）
+    dedup=[]; seen=set()
+    for x in rows:
+        key=json.dumps(x,ensure_ascii=False,sort_keys=True,default=str)
+        if key in seen: continue
+        seen.add(key); dedup.append(x)
+    if len(dedup)!=len(rows):
+        log(f'⚠️ {path} 分页去重: {len(rows)} → {len(dedup)}')
+        rows=dedup
+    diff=abs(len(rows)-total) if isinstance(total,int) else 999
+    if total and diff>5 and not (len(rows)>0 and diff/max(total,1)<0.002):
+        raise RuntimeError(f'{path} total mismatch: {total}/{len(rows)}')
+    if total and len(rows)!=total:
+        log(f'⚠️ {path} total 轻微不一致，已容忍: 声明{total}/实得{len(rows)}')
     return rows
 
 def date(x):
