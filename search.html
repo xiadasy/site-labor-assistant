@@ -159,7 +159,7 @@ function projectDetailHtml(p, labor){
   const monthly=(p.ma||[]).map(x=>`<div class="record"><b>${esc(x.m||'?')}</b><span>月度工时 ${esc(x.h||0)}H</span></div>`);
   let laborBlock='';
   if(labor){
-    const pays=[...(labor.pay||[])].sort((a,b)=>String(b.month||'').localeCompare(String(a.month||''))).map(x=>`<div class="record"><b>${esc(x.month||'?')} · ${esc(x.status||'')}</b><span>日薪 ${labor.rate?money(labor.rate)+'/天':'未录入'} · 应发 ${money(x.expectedAmount??x.amount)} / 实发 ${money(x.paidAmount)}<br>${x.componentsEntered?`基本 ${money(x.baseAmount)} · 绩效 ${money(x.performanceAmount)} · 高温 ${money(x.heatAllowance)} · 其他 ${money(x.otherAdditions)} · 扣款 ${money(x.deductions)}`:''}${x.remark?`<br>备注：${esc(x.remark)}`:''}</span></div>`);
+    const pays=[...(labor.pay||[])].sort((a,b)=>String(b.month||'').localeCompare(String(a.month||''))).map(x=>`<div class="record"><b>${esc(x.month||'?')} · ${esc(x.status||'')}</b><span>日薪 ${labor.rate?money(labor.rate)+'/天':'未录入'} · 实发 ${money(x.paidAmount)} / 应发 ${money(x.expectedAmount??x.amount)}<br>${x.componentsEntered?`基本 ${money(x.baseAmount)} · 绩效 ${money(x.performanceAmount)} · 高温 ${money(x.heatAllowance)} · 其他 ${money(x.otherAdditions)} · 扣款 ${money(x.deductions)}`:''}${x.remark?`<br>备注：${esc(x.remark)}`:''}</span></div>`);
     const atts=[...(labor.att||[])].sort((a,b)=>String(b.month||'').localeCompare(String(a.month||''))).map(x=>`<div class="record"><b>${esc(x.month||'?')}</b><span>周期 ${esc(x.period||'—')} · 出勤 ${esc(x.actualDays??'—')} 天 · 加班 ${esc(x.overtimeHours||0)}H${x.note?`<br>备注：${esc(x.note)}`:''}</span></div>`);
     const certs2=(labor.cert||[]).map(x=>`<div class="record"><b>${esc(x.type||'证书')}</b><span>${esc(x.number||'未录入')} · ${esc(x.issuer||'')}<br>${esc(x.issueDate||'?')} 至 ${esc(x.expiryDate||x.validUntil||'?')}</span></div>`);
     const hist=(labor.hist||[]).map(x=>`<div class="record"><b>${x.type==='entry'?'进场':'退场'}</b><span>${esc(x.date||'')}${x.note?` · ${esc(x.note)}`:''}</span></div>`);
@@ -206,7 +206,7 @@ function projectDetailHtml(p, labor){
 }
 
 function laborDetailHtml(p){
-  const pays=[...(p.pay||[])].sort((a,b)=>String(b.month||'').localeCompare(String(a.month||''))).map(x=>`<div class="record"><b>${esc(x.month||'?')} · ${esc(x.status||'')}</b><span>应发 ${money(x.expectedAmount??x.amount)} / 实发 ${money(x.paidAmount)}${x.remark?`<br>备注：${esc(x.remark)}`:''}</span></div>`);
+  const pays=[...(p.pay||[])].sort((a,b)=>String(b.month||'').localeCompare(String(a.month||''))).map(x=>`<div class="record"><b>${esc(x.month||'?')} · ${esc(x.status||'')}</b><span>实发 ${money(x.paidAmount)} / 应发 ${money(x.expectedAmount??x.amount)}${x.remark?`<br>备注：${esc(x.remark)}`:''}</span></div>`);
   const atts=[...(p.att||[])].sort((a,b)=>String(b.month||'').localeCompare(String(a.month||''))).map(x=>`<div class="record"><b>${esc(x.month||'?')}</b><span>出勤 ${esc(x.actualDays??'—')} 天 · 加班 ${esc(x.overtimeHours||0)}H · 周期 ${esc(x.period||'—')}</span></div>`);
   const certs=(p.cert||[]).map(x=>`<div class="record"><b>${esc(x.type||'证书')}</b><span>${esc(x.number||'未录入')} · ${esc(x.issuer||'')}</span></div>`);
   const hist=(p.hist||[]).map(x=>`<div class="record"><b>${x.type==='entry'?'进场':'退场'}</b><span>${esc(x.date||'')}${x.note?` · ${esc(x.note)}`:''}</span></div>`);
