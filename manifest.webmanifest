@@ -2,7 +2,7 @@
   "name": "东方枢纽劳务助手",
   "short_name": "东方劳务",
   "description": "劳务人员、工资历史与证书一键查询",
-  "start_url": "./?pwa=40",
+  "start_url": "./?pwa=41",
   "scope": "./",
   "display": "standalone",
   "background_color": "#e9eeeb",
