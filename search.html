@@ -37,7 +37,7 @@ body{min-height:100dvh}
 .list{padding:0 12px calc(24px + env(safe-area-inset-bottom))}
 .card{background:var(--paper);border:1px solid #fff;border-radius:16px;margin-bottom:10px;box-shadow:0 8px 20px #17342f0d;overflow:hidden}
 .card-head{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;padding:12px 14px;cursor:pointer}
-.avatar{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#e8f3ed,#dcece3);color:var(--green);display:grid;place-items:center;font-weight:800;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.avatar{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#e8f3ed,#dcece3);color:var(--green);display:grid;place-items:center;font-weight:800;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}.photo-viewer{position:fixed;inset:0;z-index:30;background:rgba(8,18,15,.82);display:flex;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(4px)}.photo-viewer.hidden{display:none}.photo-viewer img{max-width:min(92vw,520px);max-height:82dvh;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.35);background:#fff;object-fit:contain}.photo-viewer .pv-close{position:absolute;top:calc(12px + env(safe-area-inset-top));right:14px;width:40px;height:40px;border:0;border-radius:12px;background:#ffffff22;color:#fff;font-size:24px}.photo-viewer .pv-name{position:absolute;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom));text-align:center;color:#fff;font-size:14px;text-shadow:0 2px 8px #0008}
 .meta b{display:block;font-size:15px}.meta small{display:block;margin-top:3px;color:var(--muted);font-size:11px;line-height:1.4}
 .side{text-align:right}.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:700}
 .badge.on{background:#e8f3ed;color:var(--green)}.badge.off{background:#f9e9e6;color:var(--red)}.badge.soft{background:#edf2ee;color:var(--muted)}
@@ -139,8 +139,9 @@ function match(p,q,keys){
   return keys.map(k=>p[k]||'').join(' ').toLowerCase().includes(q);
 }
 
+function openPhoto(src,name){if(!src)return;const v=$('#photoViewer'),img=$('#pvImg');img.src=src;$('#pvName').textContent=name||'';v.classList.remove('hidden')}function closePhoto(){const v=$('#photoViewer');v.classList.add('hidden');$('#pvImg').removeAttribute('src')}
 function cardBase(id,name,sub,badgeText,badgeClass,photo){
-  const av=photo?`<img src="${esc(photo)}" alt="" loading="lazy" onerror="this.remove();this.parentNode.textContent='${esc((name||'?').slice(0,1))}';">`:esc((name||'?').slice(0,1));
+  const av=photo?`<img src="${esc(photo)}" alt="" loading="lazy" data-full="${esc(photo)}" data-name="${esc(name||'')}" onerror="this.remove();this.parentNode.textContent='${esc((name||'?').slice(0,1))}';">`:esc((name||'?').slice(0,1));
   return `<article class="card" data-id="${esc(id)}"><div class="card-head"><div class="avatar">${av}</div><div class="meta"><b>${esc(name||'未录入')}</b><small>${sub}</small></div><div class="side"><span class="badge ${badgeClass}">${esc(badgeText||'')}</span><span class="arrow">▾</span></div></div><div class="body" id="body-${esc(id)}"><div class="loading"><div class="spinner"></div>加载详情…</div></div></article>`;
 }
 
@@ -406,6 +407,12 @@ $('#list').onclick=e=>{
   openCard(head.closest('.card'));
 };
 init().catch(()=>{$('#hint').textContent='加载失败，请刷新';});
+
+document.addEventListener('click',e=>{
+  const img=e.target.closest('.avatar img[data-full]');
+  if(img){e.preventDefault();e.stopPropagation();openPhoto(img.dataset.full,img.dataset.name||'');return}
+  if(e.target.id==='photoViewer'||e.target.id==='pvClose'){closePhoto()}
+},true);
 </script>
-</body>
+<div id="photoViewer" class="photo-viewer hidden"><button class="pv-close" id="pvClose">×</button><img id="pvImg" alt="放大照片"><div class="pv-name" id="pvName"></div></div></body>
 </html>
