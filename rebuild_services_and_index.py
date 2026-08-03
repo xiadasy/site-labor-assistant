@@ -127,6 +127,7 @@ for p in old['people']:
         'grant':p.get('grantOrg') or '',
         'role':p.get('role') or '',
         'managed': 1 if p.get('team') in MANAGED else 0,
+        'photo': p.get('photo') or '',
         'c':[{'type':x.get('type') or '','start':x.get('startDate') or '','end':x.get('endDate') or '','team':x.get('teamName') or ''} for x in (p.get('contracts') or [])],
         'q':[{'name':x.get('name') or '','code':x.get('code') or '','type':x.get('typeName') or '','start':x.get('startDate') or '','end':x.get('endDate') or ''} for x in (p.get('certificates') or [])],
         'svc':[{'project':x.get('projectName') or '','corp':x.get('corpName') or '','team':x.get('teamName') or '','trade':x.get('trade') or '','entry':x.get('entryDate') or '','exit':x.get('exitDate') or ''} for x in (p.get('services') or [])],

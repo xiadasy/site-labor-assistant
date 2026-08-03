@@ -37,7 +37,7 @@ body{min-height:100dvh}
 .list{padding:0 12px calc(24px + env(safe-area-inset-bottom))}
 .card{background:var(--paper);border:1px solid #fff;border-radius:16px;margin-bottom:10px;box-shadow:0 8px 20px #17342f0d;overflow:hidden}
 .card-head{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;padding:12px 14px;cursor:pointer}
-.avatar{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#e8f3ed,#dcece3);color:var(--green);display:grid;place-items:center;font-weight:800}
+.avatar{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#e8f3ed,#dcece3);color:var(--green);display:grid;place-items:center;font-weight:800;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover;display:block}
 .meta b{display:block;font-size:15px}.meta small{display:block;margin-top:3px;color:var(--muted);font-size:11px;line-height:1.4}
 .side{text-align:right}.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:700}
 .badge.on{background:#e8f3ed;color:var(--green)}.badge.off{background:#f9e9e6;color:var(--red)}.badge.soft{background:#edf2ee;color:var(--muted)}
@@ -139,8 +139,9 @@ function match(p,q,keys){
   return keys.map(k=>p[k]||'').join(' ').toLowerCase().includes(q);
 }
 
-function cardBase(id,name,sub,badgeText,badgeClass){
-  return `<article class="card" data-id="${esc(id)}"><div class="card-head"><div class="avatar">${esc((name||'?').slice(0,1))}</div><div class="meta"><b>${esc(name||'未录入')}</b><small>${sub}</small></div><div class="side"><span class="badge ${badgeClass}">${esc(badgeText||'')}</span><span class="arrow">▾</span></div></div><div class="body" id="body-${esc(id)}"><div class="loading"><div class="spinner"></div>加载详情…</div></div></article>`;
+function cardBase(id,name,sub,badgeText,badgeClass,photo){
+  const av=photo?`<img src="${esc(photo)}" alt="" loading="lazy" onerror="this.remove();this.parentNode.textContent='${esc((name||'?').slice(0,1))}';">`:esc((name||'?').slice(0,1));
+  return `<article class="card" data-id="${esc(id)}"><div class="card-head"><div class="avatar">${av}</div><div class="meta"><b>${esc(name||'未录入')}</b><small>${sub}</small></div><div class="side"><span class="badge ${badgeClass}">${esc(badgeText||'')}</span><span class="arrow">▾</span></div></div><div class="body" id="body-${esc(id)}"><div class="loading"><div class="spinner"></div>加载详情…</div></div></article>`;
 }
 
 function records(list, empty='无记录'){
@@ -330,7 +331,7 @@ function render(){
   const view=list.slice(0,80);
   $('#hint').textContent=q||filter!=='all'?`找到 ${list.length.toLocaleString()} 人${list.length>80?' · 显示前80':''}`:`共 ${list.length.toLocaleString()} 人 · 输入关键词即可检索`;
   if(tab==='project'||tab==='managed'){
-    $('#list').innerHTML=view.map(p=>cardBase(p.id,p.n,`${esc(p.u||'未录入单位')} · ${esc(p.w||'未录入工种')}<br>${esc(p.t||'未录入班组')}`,p.s,p.s==='已进场'?'on':'off')).join('')||`<div class="empty">没有匹配人员</div>`;
+    $('#list').innerHTML=view.map(p=>cardBase(p.id,p.n,`${esc(p.u||'未录入单位')} · ${esc(p.w||'未录入工种')}<br>${esc(p.t||'未录入班组')}`,p.s,p.s==='已进场'?'on':'off',p.photo)).join('')||`<div class="empty">没有匹配人员</div>`;
   }else if(tab==='labor'){
     $('#list').innerHTML=view.map(p=>cardBase(p.id,p.n,`${esc(p.u||'')} · ${esc(p.w||'')}<br>日薪 ${p.rate?money(p.rate)+'/天':'未录入'}`,p.s,p.s==='在场'?'on':'off')).join('')||`<div class="empty">没有匹配人员</div>`;
   }else{

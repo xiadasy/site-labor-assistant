@@ -7,6 +7,7 @@ for p in d['people']:
     people.append({
         'id':p.get('projectWorkerId') or p.get('idCard') or '',
         'n':p.get('name') or '',
+        'photo':p.get('photo') or '',
         'idc':p.get('idCard') or '',
         'ph':p.get('phone') or '',
         'u':p.get('unit') or '',
