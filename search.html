@@ -251,7 +251,7 @@ function companyDetailHtml(p){
 
 async function ensureProjectDetail(){
   if(projectDetail) return projectDetail;
-  const d=await fetch('search-index.json?'+Date.now()).then(r=>r.json());
+  const d=await fetch('search-index.json?'+Date.now(),{cache:'no-store'}).then(r=>r.json());
   projectDetail=new Map((d.people||[]).map(p=>[p.id,p]));
   return projectDetail;
 }
@@ -383,7 +383,7 @@ async function openCard(card){
 }
 
 async function init(){
-  const lite=await fetch('search-lite.json?'+Date.now()).then(r=>r.json());
+  const lite=await fetch('search-lite.json?'+Date.now(),{cache:'no-store'}).then(r=>r.json());
   projectLite=lite.people||[];
   $('#updated').textContent=`更新 ${lite.summary?.updatedAt||'—'} · 项目 ${lite.summary?.records||0} · 劳务 ${lite.summary?.labor||0} · 本单位 ${lite.summary?.company||0}`;
   render();
@@ -414,5 +414,6 @@ document.addEventListener('click',e=>{
   if(e.target.id==='photoViewer'||e.target.id==='pvClose'){closePhoto()}
 },true);
 </script>
+<script>if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js?v=44').then(r=>r.update())</script>
 <div id="photoViewer" class="photo-viewer hidden"><button class="pv-close" id="pvClose">×</button><img id="pvImg" alt="放大照片"><div class="pv-name" id="pvName"></div></div></body>
 </html>
