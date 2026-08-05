@@ -21,6 +21,9 @@ for p in d['people']:
         'a':p.get('age') or '',
         'x':p.get('sex') or '',
         'e':p.get('entryDate') or '',
+        'managed':(p.get('team') or '') in managed,
+        'grant':p.get('grantOrg') or '',
+        'role':p.get('role') or '',
         'b':p.get('bankName') or '',
         'bc':p.get('bankCard') or '',
         'cs':p.get('contractStatus') or '',
@@ -29,9 +32,9 @@ for p in d['people']:
         'addr':p.get('address') or '',
         'nation':p.get('nation') or '',
         'bd':p.get('birthday') or '',
-        'c':[{'type':x.get('type') or '','start':x.get('startDate') or '','end':x.get('endDate') or ''} for x in (p.get('contracts') or [])],
-        'q':[{'name':x.get('name') or '','code':x.get('code') or '','start':x.get('startDate') or '','end':x.get('endDate') or ''} for x in (p.get('certificates') or [])],
-        'svc':[{'corp':x.get('corpName') or '','team':x.get('teamName') or '','trade':x.get('trade') or '','entry':x.get('entryDate') or '','exit':x.get('exitDate') or ''} for x in (p.get('services') or [])],
+        'c':[{'type':x.get('type') or '','team':x.get('teamName') or '','start':x.get('startDate') or '','end':x.get('endDate') or ''} for x in (p.get('contracts') or [])],
+        'q':[{'name':x.get('name') or '','type':x.get('typeName') or '','code':x.get('code') or '','start':x.get('startDate') or '','end':x.get('endDate') or ''} for x in (p.get('certificates') or [])],
+        'svc':[{'project':x.get('projectName') or '','corp':x.get('corpName') or '','team':x.get('teamName') or '','trade':x.get('trade') or '','entry':x.get('entryDate') or '','exit':x.get('exitDate') or ''} for x in (p.get('services') or [])],
         'da':[{'time':x.get('time') or '','h':x.get('laborHour') or 0,'in':x.get('inTime') or '','out':x.get('outTime') or ''} for x in (p.get('dailyAttendance') or [])[-5:]],
         'ma':[{'m':x.get('attendanceDate') or '','h':x.get('laborHour') or 0} for x in (p.get('monthlyAttendance') or [])]
     })
@@ -47,8 +50,18 @@ summary={
  'company':tabs.get('company',0),
  'updatedAt':d['project'].get('updatedAt') or datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 }
+source_services=sum(len(p.get('services') or []) for p in d['people'])
+index_services=[s for p in people for s in p['svc']]
+if len(people)!=summary['records'] or len(index_services)!=source_services:
+    raise RuntimeError('search index count mismatch')
+if any(not s.get('project') for s in index_services):
+    raise RuntimeError('search index missing project service name')
+if sum(bool(p.get('photo')) for p in people)!=summary['withPhoto']:
+    raise RuntimeError('search index photo count mismatch')
+if sum(bool(p.get('managed')) for p in people)!=summary['managed']:
+    raise RuntimeError('search index managed count mismatch')
 # lite index for first paint
-lite=[{'id':p['id'],'n':p['n'],'photo':p['photo'],'idc':p['idc'],'ph':p['ph'],'u':p['u'],'t':p['t'],'w':p['w'],'s':p['s'],'a':p['a'],'x':p['x'],'e':p['e']} for p in people]
+lite=[{'id':p['id'],'n':p['n'],'photo':p['photo'],'idc':p['idc'],'ph':p['ph'],'u':p['u'],'t':p['t'],'w':p['w'],'s':p['s'],'a':p['a'],'x':p['x'],'e':p['e'],'managed':p['managed']} for p in people]
 open('search-lite.json','w').write(json.dumps({'version':1,'summary':summary,'people':lite},ensure_ascii=False,separators=(',',':')))
 # full detail index for expand
 open('search-index.json','w').write(json.dumps({'version':1,'summary':summary,'people':people},ensure_ascii=False,separators=(',',':')))
