@@ -48,7 +48,7 @@ summary={
  'updatedAt':d['project'].get('updatedAt') or datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 }
 # lite index for first paint
-lite=[{'id':p['id'],'n':p['n'],'idc':p['idc'],'ph':p['ph'],'u':p['u'],'t':p['t'],'w':p['w'],'s':p['s'],'a':p['a'],'x':p['x'],'e':p['e']} for p in people]
+lite=[{'id':p['id'],'n':p['n'],'photo':p['photo'],'idc':p['idc'],'ph':p['ph'],'u':p['u'],'t':p['t'],'w':p['w'],'s':p['s'],'a':p['a'],'x':p['x'],'e':p['e']} for p in people]
 open('search-lite.json','w').write(json.dumps({'version':1,'summary':summary,'people':lite},ensure_ascii=False,separators=(',',':')))
 # full detail index for expand
 open('search-index.json','w').write(json.dumps({'version':1,'summary':summary,'people':people},ensure_ascii=False,separators=(',',':')))
