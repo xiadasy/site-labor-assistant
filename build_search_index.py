@@ -2,6 +2,10 @@ import json,base64
 from datetime import datetime
 d=json.loads(base64.b64decode(json.load(open('project-encrypted-data.json'))['payload']))
 managed=d['project'].get('managedTeams',[])
+try:
+    tabs={x['id']:x.get('count',0) for x in json.load(open('search-meta.json')).get('tabs',[])}
+except Exception:
+    tabs={}
 people=[]
 for p in d['people']:
     people.append({
@@ -37,7 +41,10 @@ summary={
  'managed':sum(1 for p in people if p['t'] in managed),
  'managedActive':sum(1 for p in people if p['t'] in managed and p['s']=='已进场'),
  'withCert':sum(1 for p in people if p['q']),
+ 'withPhoto':sum(1 for p in people if p.get('photo')),
  'units':len(set(p['u'] for p in people if p['u'])),
+ 'labor':tabs.get('labor',0),
+ 'company':tabs.get('company',0),
  'updatedAt':d['project'].get('updatedAt') or datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 }
 # lite index for first paint
@@ -46,6 +53,15 @@ open('search-lite.json','w').write(json.dumps({'version':1,'summary':summary,'pe
 # full detail index for expand
 open('search-index.json','w').write(json.dumps({'version':1,'summary':summary,'people':people},ensure_ascii=False,separators=(',',':')))
 open('project-widget-summary.json','w').write(json.dumps(summary,ensure_ascii=False,separators=(',',':')))
+try:
+    meta=json.load(open('search-meta.json'))
+    meta.setdefault('summary',{}).update(summary)
+    for tab in meta.get('tabs',[]):
+        if tab.get('id')=='project': tab['count']=summary['records']
+        elif tab.get('id')=='managed': tab['count']=summary['managed']
+    open('search-meta.json','w').write(json.dumps(meta,ensure_ascii=False,separators=(',',':')))
+except Exception:
+    pass
 print('search-lite.json',round(len(open('search-lite.json','rb').read())/1024,1),'KB')
 print('search-index.json',round(len(open('search-index.json','rb').read())/1024,1),'KB')
 print('project-widget-summary.json',round(len(open('project-widget-summary.json','rb').read())/1024,1),'KB')

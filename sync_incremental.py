@@ -134,6 +134,28 @@ def fmt_daily(records):
 def fmt_monthly(records):
     return [{'attendanceDate':x.get('attendanceDate') or '','laborHour':x.get('workerLaborHour') or 0,'totalLaborHour':x.get('totalWorkerLaborHour') or 0} for x in records]
 
+def sync_photo(person):
+    if person.get('photo'):
+        return True
+    files=call('/api/v1.0/file/queryFile',{'relationId':person['workerId'],'type':'worker_recent_photo'}) or []
+    if not files:
+        return False
+    url=files[0].get('fileUrl') or ''
+    if url.startswith('/'):
+        url=BASE+url
+    if not url.startswith('http'):
+        return False
+    r=requests.get(url,headers=H,timeout=TIMEOUT)
+    r.raise_for_status()
+    if len(r.content)<1000:
+        return False
+    os.makedirs(f'{ROOT}/photos',exist_ok=True)
+    rel=f'photos/{person["idCard"]}.jpg'
+    with open(f'{ROOT}/{rel}','wb') as f:
+        f.write(r.content)
+    person['photo']=rel
+    return True
+
 def build_person(r,d,c,ce,s,old_map,da_list,mo_list):
     bd=str(d.get('birthday') or '')
     old=old_map.get(d.get('idNumber') or r.get('idNumber'),{})
@@ -165,6 +187,7 @@ def build_person(r,d,c,ce,s,old_map,da_list,mo_list):
         'accessCard':d.get('cardNumber') or '',
         'contracts':fmt_contracts(c),'certificates':fmt_certs(ce),'services':fmt_services(s),
         'dailyAttendance':da_list,'monthlyAttendance':mo_list,
+        'photo':old.get('photo',''),
         'detailSyncStatus':'已同步','attendanceMode':'synced'
     }
 
@@ -260,7 +283,13 @@ def main():
         pwid=r['id']
         da=fmt_daily(da_map.get(pwid,[]))
         mo=fmt_monthly(mo_map.get(pwid,[]))
-        people.append(build_person(r,d,c,ce,s,old_map,da,mo))
+        person=build_person(r,d,c,ce,s,old_map,da,mo)
+        if not person.get('photo'):
+            try:
+                sync_photo(person)
+            except Exception as e:
+                log(f'⚠️ 近照同步失败 {person.get("idCard")}: {e}')
+        people.append(person)
 
     # 校验
     if len(people)!=len(rows):
@@ -272,7 +301,8 @@ def main():
         'managedActive':sum(x['team'] in MANAGED and x['status']=='已进场' for x in people),
         'medicalMatched':0,'medicalWarnings':0,
         'detailSynced':len(people),'detailPending':0,
-        'dailyAttendanceRecords':len(daily),'monthlyAttendanceRecords':len(monthly)
+        'dailyAttendanceRecords':len(daily),'monthlyAttendanceRecords':len(monthly),
+        'withPhoto':sum(bool(x.get('photo')) for x in people)
     }
     old_data['project'].update({
         'updatedAt':datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
