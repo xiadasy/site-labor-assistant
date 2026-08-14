@@ -1,1 +1,1 @@
-{"version":2,"tabs":[{"id":"project","name":"项目总管","count":2842},{"id":"managed","name":"我管班组","count":72},{"id":"labor","name":"劳务助手","count":74,"needPassword":"labor"},{"id":"company","name":"本单位","count":395,"needPassword":"company"}],"summary":{"records":2842,"active":1246,"managed":72,"managedActive":50,"withCert":2590,"withPhoto":2842,"units":25,"labor":74,"company":395,"updatedAt":"2026-08-12 22:04:02"}}
+{"version":1,"summary":{"records":2860,"active":1260,"managed":72,"managedActive":51,"withCert":2608,"units":25,"updatedAt":"2026-08-14 15:30:24"}}
