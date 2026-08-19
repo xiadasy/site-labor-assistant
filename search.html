@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="app-build" content="v33-multiboard">
+<meta name="app-build" content="v34-managed-fix">
 <style>
 :root{--ink:#152722;--deep:#17342f;--green:#267663;--orange:#c96d29;--red:#b84f42;--muted:#74807a;--line:#e3e8e2;--paper:#fffefa;--soft:#f2f5f1}
 *{box-sizing:border-box}html,body{margin:0;background:var(--soft);color:var(--ink);font-family:"PingFang SC",-apple-system,BlinkMacSystemFont,sans-serif;font-variant-numeric:tabular-nums}
@@ -91,7 +91,8 @@ body{min-height:100dvh}
 
 <script>
 const $=s=>document.querySelector(s);
-const MANAGED=['黄卫华_2414班组','上海东站九分弱电班组','(有登高车操作证)上海东站九分弱电班组','(有登高车操作证)上海东站九分弱电黄卫华班组'];
+const MANAGED=['黄卫华_2414班组','上海东站九分弱电班组','(有登高车操作证)上海东站九分弱电班组','(有登高车操作证)上海东站九分弱电黄卫华班组','宏瑞上海东站弱电班组'];
+function isManaged(p){return !!(p.managed || MANAGED.includes(p.t||''));}
 const money=n=>`¥${Number(n||0).toLocaleString('zh-CN')}`;
 const esc=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
 const val=s=>s||'未录入';
@@ -116,7 +117,7 @@ function setFilters(items){
 }
 
 function projectPass(p){
-  if(tab==='managed' && !p.managed) return false;
+  if(tab==='managed' && !isManaged(p)) return false;
   if(filter==='active') return p.s==='已进场';
   if(filter==='exit') return p.s==='已退场';
   if(filter==='cert') return !!(projectDetail?.get(p.id)?.q?.length);
@@ -179,7 +180,7 @@ function projectDetailHtml(p, labor){
       <div class="section">月度考勤（劳务）</div>${records(atts,'无劳务考勤')}
       <div class="section">劳务证书</div>${records(certs2,'无劳务证书')}
       <div class="section">进退场历史</div>${records(hist,'无进退场历史')}`;
-  }else if(p.managed){
+  }else if(isManaged(p)){
     laborBlock=`<div class="section">劳务档案</div><div class="records"><div class="record"><b>未匹配到劳务助手档案</b><span>此人在我管班组，但劳务加密库中暂无同身份证记录</span></div></div>`;
   }
   return `
@@ -312,10 +313,10 @@ function render(){
   const q=$('#q').value.trim();
   $('#searchWrap').classList.toggle('has-text',!!q);
   if(tab==='project'){
-    setStats([[projectLite.length,'项目总人数'],[projectLite.filter(p=>p.s==='已进场').length,'已进场'],[projectLite.filter(p=>p.managed).length,'我管班组',true],[projectLite.filter(p=>p.managed&&p.s==='已进场').length,'我管在场',true]]);
+    setStats([[projectLite.length,'项目总人数'],[projectLite.filter(p=>p.s==='已进场').length,'已进场'],[projectLite.filter(isManaged).length,'我管班组',true],[projectLite.filter(p=>isManaged(p)&&p.s==='已进场').length,'我管在场',true]]);
     setFilters([['all','全部'],['active','已进场'],['exit','已退场'],['cert','有证书']]);
   }else if(tab==='managed'){
-    const m=projectLite.filter(p=>p.managed);
+    const m=projectLite.filter(isManaged);
     setStats([[m.length,'我管人数',true],[m.filter(p=>p.s==='已进场').length,'当前在场',true],[m.filter(p=>p.s==='已退场').length,'已退场'],[laborUnlocked?m.filter(p=>laborById.has(p.idc)).length:0,'已匹配劳务']]);
     setFilters([['all','全部'],['active','已进场'],['exit','已退场']]);
   }else if(tab==='labor'){
@@ -414,6 +415,6 @@ document.addEventListener('click',e=>{
   if(e.target.id==='photoViewer'||e.target.id==='pvClose'){closePhoto()}
 },true);
 </script>
-<script>if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js?v=44').then(r=>r.update())</script>
+<script>if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js?v=46').then(r=>r.update())</script>
 <div id="photoViewer" class="photo-viewer hidden"><button class="pv-close" id="pvClose">×</button><img id="pvImg" alt="放大照片"><div class="pv-name" id="pvName"></div></div></body>
 </html>
