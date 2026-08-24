@@ -91,7 +91,7 @@ body{min-height:100dvh}
 
 <script>
 const $=s=>document.querySelector(s);
-const MANAGED=['黄卫华_2414班组','上海东站九分弱电班组','(有登高车操作证)上海东站九分弱电班组','(有登高车操作证)上海东站九分弱电黄卫华班组','宏瑞上海东站弱电班组'];
+const MANAGED=['黄卫华_2414班组','上海东站九分弱电班组','(有登高车操作证)上海东站九分弱电班组','(有登高车操作证)上海东站九分弱电黄卫华班组','宏瑞上海东站弱电班组','黄卫华班组','白龙港三期强电'];
 function isManaged(p){return !!(p.managed || MANAGED.includes(p.t||''));}
 const money=n=>`¥${Number(n||0).toLocaleString('zh-CN')}`;
 const esc=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
