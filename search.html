@@ -163,6 +163,7 @@ function projectDetailHtml(p, labor){
   const monthly=(p.ma||[]).map(x=>`<div class="record"><b>${esc(x.m||'?')}</b><span>月度工时 ${esc(x.h||0)}H</span></div>`);
   let laborBlock='';
   if(labor){
+    const same=(laborPeople||[]).filter(x=>x.idc&&x.idc===labor.idc);
     const pays=[...(labor.pay||[])].sort((a,b)=>String(b.month||'').localeCompare(String(a.month||'')));
     const payPaid=pays.reduce((s,x)=>s+Number(x.paidAmount??x.amount??0),0),payExpected=pays.reduce((s,x)=>s+Number(x.expectedAmount??x.amount??0),0);
     const payRows=pays.map(x=>`<div class="record"><div class="pay-head"><b>${esc(x.month||'?')} · ${esc(x.status||'')}</b><b class="pay-sum">${money(x.paidAmount)} / ${money(x.expectedAmount??x.amount)}</b></div><span>日薪 ${labor.rate?money(labor.rate)+'/天':'未录入'} · 实发 ${money(x.paidAmount)} / 应发 ${money(x.expectedAmount??x.amount)}<br>${x.componentsEntered?`基本 ${money(x.baseAmount)} · 绩效 ${money(x.performanceAmount)} · 高温 ${money(x.heatAllowance)} · 其他 ${money(x.otherAdditions)} · 扣款 ${money(x.deductions)}`:''}${x.remark?`<br>备注：${esc(x.remark)}`:''}</span></div>`);
@@ -180,7 +181,7 @@ function projectDetailHtml(p, labor){
         ${fact('银行卡', labor.bc)}
         ${fact('开户行', labor.bank)}
       </div>
-      <div class="section">工资历史</div>${pays.length?`<div class="records">${payRows.join('')}${payTotal}</div>`:records([], '无工资记录')}
+      <div class="section">工资历史</div>${pays.length?`<div class="records">${payRows.join('')}${payTotal}${same.length>1?`<div class="record"><b>同身份证历史记录</b><span>${same.filter(x=>x!==labor).map(x=>`${esc(x.u)} · ${esc(x.s)}${x.ex?` · 退场 ${esc(x.ex)}`:''}`).join('<br>')}</span></div>`:''}</div>`:records([], '无工资记录')}
       <div class="section">月度考勤（劳务）</div>${records(atts,'无劳务考勤')}
       <div class="section">劳务证书</div>${records(certs2,'无劳务证书')}
       <div class="section">进退场历史</div>${records(hist,'无进退场历史')}`;
@@ -283,7 +284,11 @@ async function unlock(kind,password){
           pay:p.payrollHistory||[], att:p.attendanceHistory||[], cert:p.certificates||[], hist:p.statusHistory||[]
         };
         laborPeople.push(item);
-        if(item.idc) laborById.set(item.idc,item);
+        if(item.idc){
+          const prev=laborById.get(item.idc);
+          const rank=x=>`${x.s==='在场'?'1':'0'}|${x.e||''}`;
+          if(!prev||rank(item)>=rank(prev)) laborById.set(item.idc,item);
+        }
       }
     }
     laborUnlocked=true;
